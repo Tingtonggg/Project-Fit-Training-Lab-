@@ -117,15 +117,21 @@
     #nav { left: 0 !important; }
     #key-hint { display: none; }
 
-    .slide {
-      position: relative !important; display: none !important;
-      inset: auto !important; transform: none !important;
-      opacity: 1 !important; pointer-events: auto !important;
-      min-height: calc(100vh - 88px);
-      padding: 24px 16px;
-      justify-content: center;
-    }
-    .slide.active { display: flex !important; }
+   .slide {
+  position: relative !important;
+  display: none !important;
+  inset: auto !important;
+  transform: none !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  min-height: 100vh;
+  padding: 24px 16px;
+  justify-content: flex-start;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+.slide.active { display: flex !important; }
     .slide.prev { display: none !important; }
 
     .two-col, .three-col { grid-template-columns: 1fr !important; }
