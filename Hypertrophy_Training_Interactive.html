@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Science of Hypertrophy Training | Performance Coaching</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --accent: #f0883e;
+    --accent2: #56d364;
+    --accent3: #58a6ff;
+    --accent4: #d2a8ff;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --gold: #e3b341;
+    --red: #f85149;
+    --border: #30363d;
+    --card: #21262d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg); color: var(--text);
+    overflow: hidden; height: 100vh; width: 100vw; user-select: none;
+  }
+
+  /* ── Top Controls ── */
+  #sidenav-top {
+    position: fixed; top: 0; left: 0; width: 200px; height: 44px;
+    background: rgba(13,17,23,0.97); border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border); z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(8px);
+  }
+  #sidenav-top span { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: var(--text2); text-transform: uppercase; }
+  #controls {
+    position: fixed; top: 0; left: 200px; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 20px; z-index: 100;
+    background: rgba(13,17,23,0.97); border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+  }
+  #controls .brand { font-size: 12px; color: var(--text2); letter-spacing: 1px; text-transform: uppercase; }
+  #lang-toggle { display: flex; gap: 4px; background: var(--surface2); border-radius: 20px; padding: 3px; }
+  #lang-toggle button {
+    border: none; cursor: pointer; padding: 5px 16px; border-radius: 16px;
+    font-size: 13px; font-weight: 600; transition: all .25s;
+    background: transparent; color: var(--text2);
+  }
+  #lang-toggle button.active { background: var(--accent); color: #fff; }
+  #slide-counter { font-size: 13px; color: var(--text2); }
+
+  /* ── Left Sidenav ── */
+  #sidenav {
+    position: fixed; top: 44px; left: 0; bottom: 44px;
+    width: 200px; background: rgba(13,17,23,0.97);
+    border-right: 1px solid var(--border); z-index: 90;
+    overflow-y: auto; display: flex; flex-direction: column;
+    backdrop-filter: blur(10px);
+  }
+  #sidenav::-webkit-scrollbar { width: 3px; }
+  #sidenav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .sidenav-section {
+    font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text2); padding: 14px 12px 5px; opacity: .55;
+    border-top: 1px solid var(--border); margin-top: 4px;
+  }
+  .sidenav-section:first-child { border-top: none; margin-top: 0; }
+  .sidenav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 12px; cursor: pointer; transition: all .18s;
+    border-left: 2px solid transparent;
+  }
+  .sidenav-item:hover { background: var(--surface2); }
+  .sidenav-item.active { background: rgba(240,136,62,.1); border-left-color: var(--accent); }
+  .sidenav-num { font-size: 10px; font-weight: 700; min-width: 18px; color: var(--text2); flex-shrink: 0; text-align: center; }
+  .sidenav-item.active .sidenav-num { color: var(--accent); }
+  .sidenav-label { font-size: 11.5px; color: var(--text2); line-height: 1.35; }
+  .sidenav-item.active .sidenav-label { color: var(--text); font-weight: 600; }
+
+  /* ── Slideshow ── */
+  #slideshow {
+    position: fixed; top: 44px; left: 200px; right: 0; bottom: 44px;
+    overflow: hidden;
+  }
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 28px 44px;
+    opacity: 0; pointer-events: none;
+    transform: translateX(60px);
+    transition: all .4s cubic-bezier(.4,0,.2,1);
+  }
+  .slide.active { opacity: 1; pointer-events: all; transform: translateX(0); }
+  .slide.prev { opacity: 0; transform: translateX(-60px); }
+
+  /* ── Navigation ── */
+  #nav {
+    position: fixed; bottom: 0; left: 200px; right: 0;
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    padding: 8px 20px; background: rgba(13,17,23,0.97);
+    border-top: 1px solid var(--border); backdrop-filter: blur(8px);
+  }
+  #nav button {
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    padding: 6px 20px; border-radius: 20px; cursor: pointer; font-size: 14px;
+    transition: all .2s;
+  }
+  #nav button:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+  #nav button:disabled { opacity: .3; cursor: not-allowed; }
+  .dot-nav { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: center; max-width: 60vw; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); cursor: pointer; transition: all .2s; flex-shrink: 0; }
+  .dot.active { background: var(--accent); transform: scale(1.4); }
+  #key-hint { position: fixed; bottom: 52px; right: 16px; font-size: 11px; color: var(--text2); opacity: .5; }
+
+  /* ── Typography ── */
+  .tag { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+  h1 { font-size: clamp(26px, 3.8vw, 50px); font-weight: 800; line-height: 1.1; }
+  h2 { font-size: clamp(18px, 2.6vw, 34px); font-weight: 700; line-height: 1.2; margin-bottom: 6px; }
+  h3 { font-size: clamp(14px, 1.7vw, 20px); font-weight: 600; }
+  h4 { font-size: clamp(13px, 1.4vw, 17px); font-weight: 700; }
+  p, li { font-size: clamp(12px, 1.2vw, 15px); line-height: 1.6; color: var(--text2); }
+  strong { color: var(--text); }
+
+  /* ── Layout ── */
+  .slide-inner { width: 100%; max-width: 1100px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; width: 100%; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 22px;
+  }
+  .card.accent-border { border-color: var(--accent); }
+  .card.green-border { border-color: var(--accent2); }
+  .card.blue-border { border-color: var(--accent3); }
+  .card.red-border { border-color: var(--red); }
+  .stat-big { font-size: clamp(30px, 3.8vw, 52px); font-weight: 800; color: var(--accent); line-height: 1; }
+  .stat-unit { font-size: 13px; color: var(--text2); }
+  .chart-wrap { width: 100%; position: relative; }
+  .chart-wrap canvas { max-height: 260px; }
+  .source { font-size: 10.5px; color: var(--text2); opacity: .55; margin-top: 6px; }
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+  .badge-orange { background: rgba(240,136,62,.2); color: var(--accent); }
+  .badge-green { background: rgba(86,211,100,.2); color: var(--accent2); }
+  .badge-blue { background: rgba(88,166,255,.2); color: var(--accent3); }
+  .badge-red { background: rgba(248,81,73,.2); color: var(--red); }
+  .badge-gold { background: rgba(227,179,65,.2); color: var(--gold); }
+
+  /* Step cards */
+  .step-list { display: flex; flex-direction: column; gap: 9px; }
+  .step-item { display: flex; gap: 12px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; }
+  .step-num { min-width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  .step-num.green { background: var(--accent2); }
+  .step-num.blue { background: var(--accent3); }
+  .step-num.gold { background: var(--gold); }
+  .step-num.red { background: var(--red); }
+
+  /* RIR Slider */
+  .slider-wrap { width: 100%; }
+  .slider-wrap input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
+  .slider-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-top: 4px; }
+
+  /* Mechism pill labels */
+  .mech-label {
+    display: inline-block; padding: 2px 10px; border-radius: 10px;
+    font-size: 10px; font-weight: 800; letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .mech-primary { background: var(--accent); color: #fff; }
+  .mech-secondary { background: var(--accent3); color: #fff; }
+  .mech-debated { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+
+  /* Tempo timeline */
+  .tempo-track { display: flex; border-radius: 8px; overflow: hidden; height: 40px; width: 100%; }
+  .tempo-seg { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; transition: all .3s; }
+
+  /* Animations */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
+  .fade-up { animation: fadeUp .4s both; }
+  .d1{animation-delay:.1s} .d2{animation-delay:.2s} .d3{animation-delay:.3s}
+  .d4{animation-delay:.4s} .d5{animation-delay:.5s} .d6{animation-delay:.6s}
+
+  /* Part II title slide */
+  #s10 { background: radial-gradient(ellipse at 60% 40%, #1a1a2e 0%, var(--bg) 70%); }
+
+  /* Squat/Bench cards */
+  .move-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; height: 100%; }
+  .move-point { display: flex; gap: 8px; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .move-point:last-child { border-bottom: none; }
+  .move-point .icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+  /* Summary hexagon grid */
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; width: 100%; }
+  .summary-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 18px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .summary-card:hover { border-color: var(--accent); background: rgba(240,136,62,.06); transition: all .2s; }
+  .summary-num { font-size: 28px; font-weight: 800; color: var(--accent); line-height: 1; }
+</style>
+</head>
+<body>
+
+<!-- Sidenav top cap -->
+<div id="sidenav-top"><span data-en="SLIDE INDEX" data-zh="幻灯片目录">SLIDE INDEX</span></div>
+
+<!-- Left Sidenav -->
+<div id="sidenav">
+  <div class="sidenav-section" data-en="PART I · SCIENCE" data-zh="第一部分 · 训练科学">PART I · SCIENCE</div>
+  <div class="sidenav-item active" onclick="goToSlide(0)"><span class="sidenav-num">01</span><span class="sidenav-label" data-en="Title" data-zh="标题">Title</span></div>
+  <div class="sidenav-item" onclick="goToSlide(1)"><span class="sidenav-num">02</span><span class="sidenav-label" data-en="Agenda" data-zh="课程大纲">Agenda</span></div>
+  <div class="sidenav-item" onclick="goToSlide(2)"><span class="sidenav-num">03</span><span class="sidenav-label" data-en="Hypertrophy Drivers" data-zh="肥大驱动因素">Hypertrophy Drivers</span></div>
+  <div class="sidenav-item" onclick="goToSlide(3)"><span class="sidenav-num">04</span><span class="sidenav-label" data-en="Training to Failure" data-zh="力竭训练">Training to Failure</span></div>
+  <div class="sidenav-item" onclick="goToSlide(4)"><span class="sidenav-num">05</span><span class="sidenav-label" data-en="Fiber Recruitment" data-zh="肌纤维招募">Fiber Recruitment</span></div>
+  <div class="sidenav-item" onclick="goToSlide(5)"><span class="sidenav-num">06</span><span class="sidenav-label" data-en="Failure & Recovery" data-zh="力竭与恢复">Failure &amp; Recovery</span></div>
+  <div class="sidenav-item" onclick="goToSlide(6)"><span class="sidenav-num">07</span><span class="sidenav-label" data-en="Stretch Hypertrophy" data-zh="拉伸介导肥大">Stretch Hypertrophy</span></div>
+  <div class="sidenav-item" onclick="goToSlide(7)"><span class="sidenav-num">08</span><span class="sidenav-label" data-en="Training Frequency" data-zh="训练频率">Training Frequency</span></div>
+  <div class="sidenav-item" onclick="goToSlide(8)"><span class="sidenav-num">09</span><span class="sidenav-label" data-en="Tempo & TUT" data-zh="节奏与张力时间">Tempo &amp; TUT</span></div>
+  <div class="sidenav-section" data-en="PART II · MECHANICS" data-zh="第二部分 · 动作技术">PART II · MECHANICS</div>
+  <div class="sidenav-item" onclick="goToSlide(9)"><span class="sidenav-num">10</span><span class="sidenav-label" data-en="Mechanics Intro" data-zh="动作技术简介">Mechanics Intro</span></div>
+  <div class="sidenav-item" onclick="goToSlide(10)"><span class="sidenav-num">11</span><span class="sidenav-label" data-en="Squat & Bench" data-zh="深蹲与卧推">Squat &amp; Bench</span></div>
+  <div class="sidenav-item" onclick="goToSlide(11)"><span class="sidenav-num">12</span><span class="sidenav-label" data-en="Why It Fails" data-zh="为何没效果">Why It Fails</span></div>
+  <div class="sidenav-item" onclick="goToSlide(12)"><span class="sidenav-num">13</span><span class="sidenav-label" data-en="Corrections" data-zh="功能性修正">Corrections</span></div>
+  <div class="sidenav-item" onclick="goToSlide(13)"><span class="sidenav-num">14</span><span class="sidenav-label" data-en="Summary" data-zh="核心要点">Summary</span></div>
+  <div class="sidenav-item" onclick="goToSlide(14)"><span class="sidenav-num">15</span><span class="sidenav-label" data-en="Q&amp;A" data-zh="问答环节">Q&amp;A</span></div>
+</div>
+
+<!-- Top Controls -->
+<div id="controls">
+  <span class="brand">Performance Coaching · 2025</span>
+  <div id="lang-toggle">
+    <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+    <button id="btn-zh" onclick="setLang('zh')">中文</button>
+  </div>
+  <span id="slide-counter">1 / 15</span>
+</div>
+
+<!-- Slides -->
+<div id="slideshow">
+
+<!-- ── S1: Title ── -->
+<div class="slide active" id="s1" style="background:radial-gradient(ellipse at 35% 55%, #1f1508 0%, var(--bg) 65%);text-align:center">
+  <div>
+    <div class="tag" data-en="PERFORMANCE COACHING GUIDE" data-zh="表现提升教练指南">PERFORMANCE COACHING GUIDE</div>
+    <h1 style="margin-top:10px">
+      <span data-en="The Science of" data-zh="肌肉肥大">The Science of</span><br>
+      <span style="color:var(--accent)" data-en="Hypertrophy Training" data-zh="训练科学">Hypertrophy Training</span>
+    </h1>
+    <div style="font-size:clamp(14px,1.6vw,19px);color:var(--text2);margin-top:12px" data-en="Evidence-Based · Research-Driven · Actionable" data-zh="基于科学证据 · 可直接应用的训练策略">Evidence-Based · Research-Driven · Actionable</div>
+    <div style="display:inline-flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:20px">
+      <span style="background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--accent)" data-en="Mechanical Tension" data-zh="机械张力">Mechanical Tension</span>
+      <span style="background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--accent)" data-en="Stretch Hypertrophy" data-zh="拉伸介导肥大">Stretch Hypertrophy</span>
+      <span style="background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--accent)" data-en="Movement Mechanics" data-zh="动作发力机制">Movement Mechanics</span>
+    </div>
+    <div style="margin-top:28px;font-size:14px;color:var(--text2)">By Kyle · Performance Coaching · 2025</div>
+  </div>
+</div>
+
+<!-- ── S2: Agenda ── -->
+<div class="slide" id="s2">
+  <div class="slide-inner">
+    <div class="tag" data-en="TRAINING AGENDA" data-zh="课程大纲">TRAINING AGENDA</div>
+    <h2 data-en="What We'll Cover Today" data-zh="今日课程内容">What We'll Cover Today</h2>
+    <div class="two-col" style="margin-top:20px;align-items:stretch">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--accent);margin-bottom:2px" data-en="PART I · THE SCIENCE" data-zh="第一部分 · 训练科学">PART I · THE SCIENCE</div>
+        <div class="step-item"><div class="step-num">01</div><div><strong data-en="Hypertrophy Mechanisms & Three Key Drivers" data-zh="肌肉肥大机制与三大驱动因素">Hypertrophy Mechanisms & Three Key Drivers</strong></div></div>
+        <div class="step-item"><div class="step-num blue">02</div><div><strong data-en="Training to Failure & Intensity Science" data-zh="力竭训练与训练强度科学">Training to Failure & Intensity Science</strong></div></div>
+        <div class="step-item"><div class="step-num green">03</div><div><strong data-en="Muscle Fiber Recruitment & Load Relationship" data-zh="肌肉纤维招募与负荷关系">Muscle Fiber Recruitment & Load Relationship</strong></div></div>
+        <div class="step-item"><div class="step-num gold">04</div><div><strong data-en="Balancing Failure, Fatigue & Recovery" data-zh="力竭、疲劳与恢复的平衡">Balancing Failure, Fatigue & Recovery</strong></div></div>
+        <div class="step-item"><div class="step-num red">05</div><div><strong data-en="Stretch-Mediated Hypertrophy (2023–2025)" data-zh="拉伸介导的肌肉肥大 (2023-2025)">Stretch-Mediated Hypertrophy (2023–2025)</strong></div></div>
+        <div class="step-item"><div class="step-num">06</div><div><strong data-en="Frequency & Tempo Optimization" data-zh="训练频率与节奏优化">Frequency & Tempo Optimization</strong></div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--accent3);margin-bottom:2px" data-en="PART II · MOVEMENT MECHANICS" data-zh="第二部分 · 动作技术与发力路径">PART II · MOVEMENT MECHANICS</div>
+        <div class="step-item"><div class="step-num blue">07</div><div><strong data-en="Squat & Bench Press Force Path Analysis" data-zh="深蹲 & 卧推发力路径对比">Squat & Bench Press Force Path Analysis</strong></div></div>
+        <div class="step-item"><div class="step-num green">08</div><div><strong data-en="Functional Training & Posture Correction" data-zh="功能性训练与体态修正">Functional Training & Posture Correction</strong></div></div>
+        <div class="card" style="margin-top:auto;background:rgba(240,136,62,.06);border-color:var(--accent)">
+          <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px" data-en="Core Message" data-zh="核心理念">Core Message</div>
+          <p data-en="Training science is not just about working hard — it's about giving the right stimulus to the right muscle using the right method, then recovering fully." data-zh="训练科学不只是关于努力训练 — 而是用正确的方法，给正确的肌肉，施加足够的刺激，并充分恢复。">Training science is not just about working hard — it's about giving the right stimulus to the right muscle using the right method, then recovering fully.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── S3: Hypertrophy Mechanisms ── -->
+<div class="slide" id="s3">
+  <div class="slide-inner">
+    <div class="tag" data-en="MECHANISMS · 01" data-zh="机制 · 01">MECHANISMS · 01</div>
+    <h2 data-en="Definition & Primary Drivers of Muscle Hypertrophy" data-zh="肌肉肥大的定义与驱动因素">Definition & Primary Drivers of Muscle Hypertrophy</h2>
+    <div class="two-col" style="margin-top:18px;align-items:stretch">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="card accent-border">
+          <div class="mech-label mech-primary">PRIMARY</div>
+          <h4 data-en="Mechanical Tension" data-zh="机械张力">Mechanical Tension</h4>
+          <p style="margin-top:6px" data-en="Physical stretch force from load activates mTOR signaling pathway. Strongest, most consistent hypertrophy stimulus — the irreplaceable core driver." data-zh="负荷产生的物理拉伸力，激活 mTOR 信号通路。最强、最一致的肌肥大刺激 · 核心驱动不可替代。">Physical stretch force from load activates mTOR signaling pathway. Strongest, most consistent hypertrophy stimulus — the irreplaceable core driver.</p>
+        </div>
+        <div class="card blue-border">
+          <div class="mech-label mech-secondary">SECONDARY</div>
+          <h4 data-en="Metabolic Stress" data-zh="代谢压力">Metabolic Stress</h4>
+          <p style="margin-top:6px" data-en="Metabolite accumulation (lactate / phosphate) causes cellular swelling. Primary mechanism in high-volume / low-load training." data-zh="代谢物堆积（乳酸 / 磷酸），引起细胞肿胀。高容量 / 低负荷训练的协同机制。">Metabolite accumulation (lactate / phosphate) causes cellular swelling. Primary mechanism in high-volume / low-load training.</p>
+        </div>
+        <div class="card">
+          <div class="mech-label mech-debated">DEBATED</div>
+          <h4 data-en="Muscle Damage" data-zh="肌肉损伤">Muscle Damage</h4>
+          <p style="margin-top:6px" data-en="Micro-tears from eccentric contractions. Recent evidence (2022–2024): not a required stimulus — may be a byproduct, not a primary driver." data-zh="离心收缩引起微撕裂。近期研究（2022-2024）认为非必要条件 — 可能是副产品而非驱动因素。">Micro-tears from eccentric contractions. Recent evidence (2022–2024): not a required stimulus — may be a byproduct, not a primary driver.</p>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:10px" data-en="Relative Contribution to Hypertrophy" data-zh="各因素对肌肥大的相对贡献">Relative Contribution to Hypertrophy</h3>
+        <div class="chart-wrap"><canvas id="chart-mechanisms"></canvas></div>
+        <div style="margin-top:10px;padding:10px 14px;background:var(--card);border-radius:8px;font-size:12px">
+          <strong data-en="Key Insight:" data-zh="核心结论：">Key Insight:</strong>
+          <span style="color:var(--text2)" data-en=" Mechanical tension is the only mechanism with strong, consistent evidence across all rep ranges and loads." data-zh=" 机械张力是唯一在所有负荷和次数范围内均有强力一致证据的肌肥大机制。"> Mechanical tension is the only mechanism with strong, consistent evidence across all rep ranges and loads.</span>
+        </div>
+        <p class="source">Schoenfeld (2010) J Strength Cond Res · Wackerhage et al. (2019) J Appl Physiol</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── S4: Training to Failure ── -->
+<div class="slide" id="s4">
+  <div class="slide-inner">
+    <div class="tag" data-en="INTENSITY · 02" data-zh="强度 · 02">INTENSITY · 02</div>
+    <h2 data-en="Training to Failure & Intensity Science" data-zh="力竭训练与训练强度">Training to Failure & Intensity Science</h2>
+    <div class="two-col" style="margin-top:16px;align-items:stretch">
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <div class="card accent-border" style="background:rgba(240,136,62,.06)">
+          <h4 data-en="Core Principle: Proximity to Failure Drives Growth" data-zh="核心原则：接近力竭才有效">Core Principle: Proximity to Failure Drives Growth</h4>
+          <p style="margin-top:6px" data-en="Only near failure (RIR ≤ 3) can high-threshold motor units be fully recruited — this maximizes mechanical tension, the key hypertrophy stimulus." data-zh="只有接近力竭（RIR ≤ 3），高阈值运动单位才被全面招募 — 机械张力随之最大化 → 肌肥大关键刺激。">Only near failure (RIR ≤ 3) can high-threshold motor units be fully recruited — this maximizes mechanical tension, the key hypertrophy stimulus.</p>
+        </div>
+        <div class="card">
+          <div class="badge badge-blue" style="margin-bottom:6px" data-en="Load Independence Principle" data-zh="负荷无关性原则">Load Independence Principle</div>
+          <p data-en="High vs low load produces similar hypertrophy — proximity to failure is the key variable. 5–30 RM all effective (Schoenfeld et al., 2017)." data-zh="高负荷 vs 低负荷肌肥大效果相似，关键是接近力竭。5-30 RM 范围均有效（Schoenfeld et al., 2017）。">High vs low load produces similar hypertrophy — proximity to failure is the key variable. 5–30 RM all effective (Schoenfeld et al., 2017).</p>
+        </div>
+        <div class="card green-border">
+          <h4 style="color:var(--accent2);margin-bottom:8px" data-en="Practical RIR Strategy" data-zh="实践建议 · RIR 策略">Practical RIR Strategy</h4>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;gap:8px"><span class="badge badge-orange">80%</span><p data-en="of sets: RIR 1–3 (leave 1–3 reps in reserve)" data-zh="组数：RIR 1-3（保留 1-3 次余量）">of sets: RIR 1–3 (leave 1–3 reps in reserve)</p></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="badge badge-red">20%</span><p data-en="of sets: RIR 0 (true failure — use sparingly)" data-zh="组数：RIR 0（真正力竭 — 谨慎使用）">of sets: RIR 0 (true failure — use sparingly)</p></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="badge badge-gold" data-en="Avoid" data-zh="避免">Avoid</span><p data-en="chronic failure every set → prevents systemic fatigue" data-zh="长期每组都力竭 → 防系统性疲劳">chronic failure every set → prevents systemic fatigue</p></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:10px" data-en="RIR vs. Motor Unit Recruitment" data-zh="RIR 与运动单位招募效率">RIR vs. Motor Unit Recruitment</h3>
+        <div class="chart-wrap"><canvas id="chart-rir"></canvas></div>
+        <div class="slider-wrap" style="margin-top:14px">
+          <label style="font-size:12px;color:var(--text2)" data-en="Drag to explore RIR zones:" data-zh="拖动探索 RIR 区间：">Drag to explore RIR zones:</label>
+          <input type="range" id="rir-slider" min="0" max="8" value="2" step="1" style="width:100%;margin-top:5px">
+          <div id="rir-result" style="margin-top:8px;font-size:13px;text-align:center;font-weight:700"></div>
+          <div class="slider-label"><span data-en="RIR 0 (True Failure)" data-zh="RIR 0（力竭）">RIR 0 (Failure)</span><span data-en="RIR 8 (Easy)" data-zh="RIR 8（轻松）">RIR 8 (Easy)</span></div>
+        </div>
+        <p class="source">Schoenfeld et al. (2017) JSCR · Schoenfeld et al. (2021) J Funct Morphol Kinesiol</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── S5: Fiber Recruitment ── -->
+<div class="slide" id="s5">
+  <div class="slide-inner">
+    <div class="tag" data-en="RECRUITMENT · 03" data-zh="招募 · 03">RECRUITMENT · 03</div>
+    <h2 data-en="Muscle Fiber Recruitment & Load Relationship" data-zh="肌肉纤维招募与负荷关系">Muscle Fiber Recruitment & Load Relationship</h2>
+    <div class="two-col" style="margin-top:16px;align-items:stretch">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="card accent-border" style="background:rgba(240,136,62,.06)">
+          <h4 data-en="Henneman's Size Principle" data-zh="Henneman 大小原则">Henneman's Size Principle</h4>
+          <p style="margin-top:6px" data-en="Activation order: slow-twitch (Type I) first → fast-twitch (Type II) last. Near failure, ANY load can fully recruit all fiber types." data-zh="激活顺序：慢肌(Type I) 先 → 快肌(Type II) 后。接近力竭时任何负荷均可招募全部纤维。">Activation order: slow-twitch (Type I) first → fast-twitch (Type II) last. Near failure, ANY load can fully recruit all fiber types.</p>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--text2);letter-spacing:1px" data-en="LOAD ZONES & FIBER RECRUITMENT" data-zh="负荷区间与纤维招募">LOAD ZONES & FIBER RECRUITMENT</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="card" style="padding:12px 14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <strong data-en="Light — 30–40% 1RM" data-zh="轻负荷 — 30-40% 1RM">Light — 30–40% 1RM</strong>
+              <span class="badge badge-green" data-en="Effective near failure" data-zh="接近力竭时同样有效">Effective near failure</span>
+            </div>
+            <p data-en="More reps needed · Higher metabolic fatigue · Same hypertrophy when taken to failure" data-zh="需要更多次数 · 更多代谢疲劳 · 力竭时肌肥大效果相同">More reps needed · Higher metabolic fatigue · Same hypertrophy when taken to failure</p>
+          </div>
+          <div class="card" style="padding:12px 14px;border-color:var(--gold)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <strong data-en="Moderate — 50–60% 1RM" data-zh="中负荷 — 50-60% 1RM">Moderate — 50–60% 1RM</strong>
+              <span class="badge badge-gold" data-en="Best balance" data-zh="最佳平衡区间">Best balance</span>
+            </div>
+            <p data-en="Optimal efficiency-to-fatigue ratio · Practical for most exercises" data-zh="效率与疲劳平衡最佳区间 · 适合大多数动作">Optimal efficiency-to-fatigue ratio · Practical for most exercises</p>
+          </div>
+          <div class="card" style="padding:12px 14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <strong data-en="Heavy — 70–85% 1RM" data-zh="重负荷 — 70-85% 1RM">Heavy — 70–85% 1RM</strong>
+              <span class="badge badge-orange" data-en="Fastest recruitment" data-zh="最快达到完全招募">Fastest recruitment</span>
+            </div>
+            <p data-en="Quickest path to full Type II recruitment · Higher CNS demand" data-zh="更快达到完全纤维招募 · 更高神经系统需求">Quickest path to full Type II recruitment · Higher CNS demand</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:10px" data-en="Type II Fiber Recruitment vs. Load + Proximity to Failure" data-zh="II 型肌纤维招募 vs. 负荷 + 力竭程度">Type II Fiber Recruitment vs. Load + Proximity to Failure</h3>
+        <div class="chart-wrap"><canvas id="chart-recruitment"></canvas></div>
+        <div style="margin-top:10px;padding:10px 14px;background:rgba(86,211,100,.08);border:1px solid var(--accent2);border-radius:8px;font-size:12px">
+          <strong data-en="Light + Failure ≈ Heavy + Failure → Equal hypertrophy outcome" data-zh="轻重量＋力竭 ≈ 重重量＋力竭 → 相同肌肥大效果">Light + Failure ≈ Heavy + Failure → Equal hypertrophy outcome</strong>
+        </div>
+        <p class="source">Henneman et al. (1965) J Neurophysiol · Mitchell et al. (2012) J Appl Physiol</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── S6: Failure / Fatigue / Recovery ── -->
+<div class="slide" id="s6">
+  <div class="slide-inner">
+    <div class="tag" data-en="RECOVERY · 04" data-zh="恢复 · 04">RECOVERY · 04</div>
+    <h2 data-en="Balancing Failure, Fatigue & Recovery" data-zh="力竭、疲劳与恢复的平衡">Balancing Failure, Fatigue & Recovery</h2>
+    <div class="two-col" style="margin-top:16px;align-items:stretch">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="card accent-border" style="background:rgba(240,136,62,.06)">
+          <div class="badge badge-orange" style="margin-bottom:6px" data-en="STIMULUS" data-zh="刺激">STIMULUS</div>
+          <h4 data-en="Proximity to Failure" data-zh="接近力竭">Proximity to Failure</h4>
+          <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px">
+            <p>✓ <span data-en="Provides essential mechanical tension for muscle growth" data-zh="提供肌肉生长的必要机械张力">Provides essential mechanical tension for muscle growth</span></p>
+            <p>✓ <span data-en="Must be near failure (RIR ≤ 3) to be effective" data-zh="必须接近力竭（RIR ≤ 3）才有效">Must be near failure (RIR ≤ 3) to be effective</span></p>
+            <p>✓ <span data-en="Place failure sets at end of session for max effect" data-zh="训练末尾安排力竭组效果最大化">Place failure sets at end of session for max effect</span></p>
+          </div>
+        </div>
+        <div class="card red-border" style="background:rgba(248,81,73,.06)">
+          <div class="badge badge-red" style="margin-bottom:6px" data-en="FATIGUE" data-zh="疲劳">FATIGUE</div>
+          <h4 data-en="Too Much of a Good Thing" data-zh="过犹不及">Too Much of a Good Thing</h4>
+          <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px">
+            <p>✗ <span data-en="Chronic failure every set → neural fatigue" data-zh="长期每组完全力竭 → 神经疲劳">Chronic failure every set → neural fatigue</span></p>
+            <p>✗ <span data-en="Systemic fatigue accumulates → compromises long-term progress" data-zh="系统性疲劳积累 → 影响长期进步">Systemic fatigue accumulates → compromises long-term progress</span></p>
+            <p>✗ <span data-en="High effort, insufficient target muscle stimulus" data-zh="感觉训练量高但目标肌刺激不足">High effort, insufficient target muscle stimulus</span></p>
+          </div>
+        </div>
+        <div class="card green-border" style="background:rgba(86,211,100,.06)">
+          <div class="badge badge-green" style="margin-bottom:6px" data-en="RECOVERY" data-zh="恢复">RECOVERY</div>
+          <h4 data-en="Ensure Full Restoration" data-zh="充分保障恢复">Ensure Full Restoration</h4>
+          <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px">
+            <p>✓ <span data-en="7–9 hours of sleep per night" data-zh="睡眠 7-9 小时 / 晚">7–9 hours of sleep per night</span></p>
+            <p>✓ <span data-en="Adequate protein (1.6–2.2 g/kg/day)" data-zh="蛋白质充足（1.6-2.2g/kg/天）">Adequate protein (1.6–2.2 g/kg/day)</span></p>
+            <p>✓ <span data-en="Deload week every 4–6 weeks" data-zh="每 4-6 周安排减量恢复周">Deload week every 4–6 weeks</span></p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:10px" data-en="Periodization: RIR Strategy Over a Training Block" data-zh="周期化建议：训练块内的 RIR 策略">Periodization: RIR Strategy Over a Training Block</h3>
+        <div class="chart-wrap"><canvas id="chart-periodization"></canvas></div>
+        <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;flex:1">
+            <strong data-en="80–90% of sets" data-zh="80–90% 组数">80–90% of sets</strong>
+            <p data-en="Keep at RIR 1–3" data-zh="保持 RIR 1-3">Keep at RIR 1–3</p>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;flex:1">
+            <strong data-en="10–20% of sets" data-zh="10–20% 组数">10–20% of sets</strong>
+            <p data-en="True failure (RIR 0)" data-zh="完全力竭（RIR 0）">True failure (RIR 0)</p>
+          </div>
+        </div>
+        <p class="source">Schoenfeld et al. (2021) J Funct Morphol Kinesiol</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── S7: Stretch-Mediated Hypertrophy ── -->
+<div class="slide" id="s7">
+  <div class="slide-inner">
+    <div class="tag" data-en="STRETCH · 05" data-zh="拉伸 · 05">STRETCH · 05</div>
+    <h2 data-en="Stretch-Mediated Hypertrophy (2023–2025 New Evidence)" data-zh="拉伸介导的肌肉肥大（2023-2025 新证据）">Stretch-Mediated Hypertrophy (2023–2025 New Evidence)</h2>
+    <div class="two-col" style="margin-top:16px;align-items:stretch">
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <div class="card" style="background:rgba(240,136,62,.08);border-color:var(--accent)">
+          <div class="badge badge-orange" style="margin-bottom:6px" data-en="KEY FINDING" data-zh="核心发现">KEY FINDING</div>
+          <p data-en="Training at long muscle lengths triggers a unique growth stimulus — promoting sarcomere addition and regional hypertrophy. Local growth response up to " data-zh="长肌肉长度训练触发独特生长刺激 — 促进肌节添加与局部区域肌肥大。局部生长反应可达 ">Training at long muscle lengths triggers a unique growth stimulus — promoting sarcomere addition and regional hypertrophy. Local growth response up to </p>
+          <div style="font-size:32px;font-weight:800;color:var(--accent);margin:6px 0">1.8×<span style="font-size:14px;color:var(--text2)">*</span></div>
+          <p style="font-size:11px;color:var(--text2)" data-en="*Regional data (distal biceps femoris), not whole-muscle average (Maeo et al., 2024)" data-zh="*局部区域数据（股二头肌远端），非整体肌肉平均生长（Maeo et al., 2024）">*Regional data (distal biceps femoris), not whole-muscle average (Maeo et al., 2024)</p>
+        </div>
+        <div>
+          <h4 style="margin-bottom:8px" data-en="Recommended Exercises (Stretch Position)" data-zh="推荐训练动作（拉伸位）">Recommended Exercises (Stretch Position)</h4>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div class="card" style="padding:10px 14px"><strong data-en="Quads" data-zh="股四头肌">Quads</strong><span style="color:var(--text2);font-size:12px" data-en=" — Leg press (deep) / Nordic curl" data-zh=" — 腿举（底部拉伸）/ 俯身腿弯举"> — Leg press (deep) / Nordic curl</span></div>
+            <div class="card" style="padding:10px 14px"><strong data-en="Hamstrings" data-zh="股二头肌">Hamstrings</strong><span style="color:var(--text2);font-size:12px" data-en=" — Romanian deadlift (full ROM) / Seated leg curl" data-zh=" — 罗马尼亚硬拉（深度）/ 坐姿腿弯举"> — Romanian deadlift (full ROM) / Seated leg curl</span></div>
+            <div class="card" style="padding:10px 14px"><strong data-en="Chest" data-zh="胸肌">Chest</strong><span style="color:var(--text2);font-size:12px" data-en=" — Incline dumbbell fly / Cable fly (long ROM)" data-zh=" — 上斜飞鸟 / 拉绳飞鸟（长ROM）"> — Incline dumbbell fly / Cable fly (long ROM)</span></div>
+          </div>
+        </div>
+        <div class="card" style="padding:10px 14px;background:rgba(86,211,100,.06);border-color:var(--accent2)">
+          <strong data-en="Key Tip:" data-zh="实践要点：">Key Tip:</strong>
+          <span style="color:var(--text2);font-size:13px" data-en=" Deep ROM is the priority · Pause 0.5–1s at the stretched position · Peak contraction is NOT the priority." data-zh=" 深度 ROM 是关键 · 接近拉伸极限位置停顿 0.5-1 秒 · 顶峰收缩非优先项。"> Deep ROM is the priority · Pause 0.5–1s at the stretched position · Peak contraction is NOT the priority.</span>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:10px" data-en="Stretch vs. Shortened Position — Growth Response" data-zh="拉伸位 vs. 缩短位 — 肌肥大响应对比">Stretch vs. Shortened Position — Growth Response</h3>
+        <div class="chart-wrap"><canvas id="chart-stretch"></canvas></div>
+        <p class="source">Maeo et al. (2024) Med Sci Sports Exerc · Pedrosa et al. (2022) Med Sci Sports Exerc</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── S8: Training Frequency ── -->
+<div class="slide" id="s8">
+  <div class="slide-inner">
+    <div class="tag" data-en="FREQUENCY · 06" data-zh="频率 · 06">FREQUENCY · 06</div>
+    <h2 data-en="Evidence-Based Training Frequency" data-zh="训练频率的科学依据">Evidence-Based Training Frequency</h2>
+    <div class="two-col" style="margin-top:16px;align-items:stretch">
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <div class="card accent-border" style="background:rgba(240,136,62,.06)">
+          <div class="stat-big">2–3×</div>
+          <div class="stat-unit" data-en="per muscle group / week" data-zh="每肌群每周">per muscle group / week</div>
+          <p style="margin-top:8px" data-en="Recommended frequency based on meta-analysis evidence (Schoenfeld et al., 2016)" data-zh="基于 meta-analysis 证据的推荐频率（Schoenfeld et al., 2016）">Recommended frequency based on meta-analysis evidence (Schoenfeld et al., 2016)</p>
+        </div>
+        <div class="card">
+          <h4 style="margin-bottom:8px" data-en="Rest Principle: Min 48h Between Sessions" data-zh="间隔原则：48 小时最短间隔">Rest Principle: Min 48h Between Sessions</h4>
+          <p data-en="Allow the protein synthesis window to fully complete before training the same muscle again." data-zh="让蛋白质合成窗口充分完成后再训练同一肌群。">Allow the protein synthesis window to fully complete before training the same muscle again.</p>
+        </div>
+        <h4 style="margin-top:4px;margin-bottom:8px" data-en="Training Split Recommendations" data-zh="分化方式建议">Training Split Recommendations</h4>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div class="step-item"><div class="step-num" style="font-size:11px">U/L</div><div><strong data-en="Upper/Lower (4 days/week)" data-zh="上下肢分化（4天/周）">Upper/Lower (4 days/week)</strong><p data-en="2× per muscle group" data-zh="每肌群 2 次">2× per muscle group</p></div></div>
+          <div class="step-item"><div class="step-num blue" style="font-size:11px">PPL</div><div><strong data-en="Push/Pull/Legs (6 days/week)" data-zh="PPL 分化（6天/周）">Push/Pull/Legs (6 days/week)</strong><p data-en="2× per muscle group" data-zh="每肌群 2 次">2× per muscle group</p></div></div>
+          <div class="step-item"><div class="step-num green" style="font-size:11px">FB</div><div><strong data-en="Full Body (3 days/week)" data-zh="全身训练（3天/周）">Full Body (3 days/week)</strong><p data-en="3× per muscle group — highest frequency" data-zh="每肌群 3 次 — 最高频率">3× per muscle group — highest frequency</p></div></div>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:10px" data-en="Weekly Frequency vs. Hypertrophy Outcome" data-zh="每周训练频率 vs. 肌肥大效果">Weekly Frequency vs. Hypertrophy Outcome</h3>
+        <div class="chart-wrap"><canvas id="chart-frequency"></canvas></div>
+        <div style="margin-top:10px;padding:10px 14px;background:var(--card);border-radius:8px;font-size:12px;display:flex;gap:12px;flex-wrap:wrap">
+          <span><strong style="color:var(--accent2)">2×/wk</strong> <span style="color:var(--text2)" data-en="outperforms 1× by ~20%" data-zh="优于 1 次/周约 20%">outperforms 1× by ~20%</span></span>
+          <span><strong style="color:var(--accent)">3×/wk</strong> <span style="color:var(--text2)" data-en="further +5% gain over 2×" data-zh="再提升约 +5%">further +5% gain over 2×</span></span>
+        </div>
+        <p class="source">Schoenfeld et al. (2016) Sports Med · Ralston et al. (2017) J Strength Cond Res</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── S9: Tempo / TUT ── -->
+<div class="slide" id="s9">
+  <div class="slide-inner">
+    <div class="tag" data-en="TEMPO · 07" data-zh="节奏 · 07">TEMPO · 07</div>
+    <h2 data-en="Time Under Tension & Training Tempo" data-zh="张力时间与训练节奏">Time Under Tension & Training Tempo</h2>
+    <div class="two-col" style="margin-top:16px;align-items:stretch">
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <div class="card accent-border" style="background:rgba(240,136,62,.06);text-align:center">
+          <div style="font-size:42px;font-weight:800;color:var(--accent)">2–3s</div>
+          <div style="font-size:14px;font-weight:700" data-en="Eccentric Phase" data-zh="离心阶段">Eccentric Phase</div>
+          <p style="margin-top:6px" data-en="~1.4× the growth efficiency of a 1-second eccentric" data-zh="约为 1 秒离心的 1.4 倍效果">~1.4× the growth efficiency of a 1-second eccentric</p>
+        </div>
+        <div class="three-col" style="grid-template-columns:1fr 1fr;gap:10px">
+          <div class="card green-border" style="text-align:center;padding:14px">
+            <div style="font-size:24px;font-weight:800;color:var(--accent2)">1s</div>
+            <div style="font-size:12px;font-weight:700" data-en="Concentric" data-zh="向心">Concentric</div>
+            <p style="font-size:12px;margin-top:4px" data-en="Explosive — as fast as possible" data-zh="爆发式 — 尽量快速用力">Explosive — as fast as possible</p>
+          </div>
+          <div class="card blue-border" style="text-align:center;padding:14px">
+            <div style="font-size:24px;font-weight:800;color:var(--accent3)">0.5s</div>
+            <div style="font-size:12px;font-weight:700" data-en="Peak Pause" data-zh="顶部停顿">Peak Pause</div>
+            <p style="font-size:12px;margin-top:4px" data-en="Enhances mind-muscle connection" data-zh="增强神经连接感">Enhances mind-muscle connection</p>
+          </div>
+        </div>
+        <div class="card" style="background:rgba(227,179,65,.08);border-color:var(--gold)">
+          <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:1px;margin-bottom:8px" data-en="GOLDEN TEMPO TEMPLATE" data-zh="黄金模板节奏">GOLDEN TEMPO TEMPLATE</div>
+          <div class="tempo-track">
+            <div class="tempo-seg" style="flex:3;background:var(--accent);" data-en="Eccentric 2–3s" data-zh="离心 2-3s">Eccentric 2–3s</div>
+            <div class="tempo-seg" style="flex:0.5;background:var(--accent3);font-size:10px" data-en="Pause 0.5s" data-zh="停顿">0.5s</div>
+            <div class="tempo-seg" style="flex:1;background:var(--accent2)" data-en="Concentric 1s" data-zh="向心 1s">Concentric 1s</div>
+          </div>
+          <p style="font-size:12px;margin-top:8px;text-align:center" data-en="&quot;Control the descent, explode on the lift&quot;" data-zh="「控制下放，爆发举起」">"Control the descent, explode on the lift"</p>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:10px" data-en="Eccentric Duration vs. Muscle Protein Synthesis" data-zh="离心时长 vs. 肌肉蛋白合成效率">Eccentric Duration vs. Muscle Protein Synthesis</h3>
+        <div class="chart-wrap"><canvas id="chart-tempo"></canvas></div>
+        <div style="margin-top:10px;padding:10px 14px;background:var(--card);border-radius:8px;font-size:12px">
+          <p data-en="Peak contraction pause is especially effective for: curls, chest flyes, lateral raises." data-zh="顶峰收缩停顿对以下动作效果显著：弯举、夹胸、侧平举。">Peak contraction pause is especially effective for: curls, chest flyes, lateral raises.</p>
+        </div>
+        <p class="source">Burd et al. (2012) J Physiol · Schoenfeld & Grgic (2020) Strength Cond J</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── S10: Part II Intro ── -->
+<div class="slide" id="s10" style="text-align:center">
+  <div style="max-width:680px">
+    <div class="tag">PART II</div>
+    <h1 style="margin-top:12px;font-size:clamp(22px,3.2vw,46px)" data-en="Movement Mechanics &amp; Force Pathways" data-zh="动作技术与发力路径">Movement Mechanics &amp; Force Pathways</h1>
+    <div style="font-size:clamp(14px,1.6vw,18px);color:var(--text2);font-style:italic;margin:22px 0;padding:20px;background:var(--card);border-radius:12px;border-left:4px solid var(--accent)">
+      <span data-en="Knowing the science of hypertrophy is only half the battle. The other half is making sure your technique puts the tension exactly where it needs to go." data-zh="了解肌肥大科学只是一半。另一半是确保你的技术把张力精准送达目标肌肉。">Knowing the science of hypertrophy is only half the battle. The other half is making sure your technique puts the tension exactly where it needs to go.</span>
+    </div>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:8px">
+      <div style="background:var(--card);border:1px solid var(--accent);border-radius:10px;padding:12px 20px">
+        <div style="font-size:24px;margin-bottom:4px">🏋️</div>
+        <strong data-en="Squat & Bench" data-zh="深蹲 & 卧推">Squat &amp; Bench</strong>
+        <p style="font-size:12px" data-en="Force path mechanics" data-zh="发力路径力学">Force path mechanics</p>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--accent3);border-radius:10px;padding:12px 20px">
+        <div style="font-size:24px;margin-bottom:4px">🔧</div>
+        <strong data-en="Root Causes" data-zh="根本原因">Root Causes</strong>
+        <p style="font-size:12px" data-en="Why hard work fails" data-zh="为何努力没效果">Why hard work fails</p>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--accent2);border-radius:10px;padding:12px 20px">
+        <div style="font-size:24px;margin-bottom:4px">✅</div>
+        <strong data-en="Corrections" data-zh="修正策略">Corrections</strong>
+        <p style="font-size:12px" data-en="Functional training fixes" data-zh="功能性训练修正">Functional training fixes</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── S11: Squat & Bench ── -->
+<div class="slide" id="s11">
+  <div class="slide-inner">
+    <div class="tag" data-en="MECHANICS · 08" data-zh="动作力学 · 08">MECHANICS · 08</div>
+    <h2 data-en="Squat &amp; Bench Press Force Path Mechanics" data-zh="深蹲 & 卧推发力路径对比">Squat &amp; Bench Press Force Path Mechanics</h2>
+    <div class="two-col" style="margin-top:16px;align-items:stretch">
+      <!-- Squat -->
+      <div class="move-card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <span style="font-size:24px">🏋️</span>
+          <h3 data-en="Squat — Hip-Dominant Drive" data-zh="深蹲 — 髋部主导发力">Squat — Hip-Dominant Drive</h3>
+        </div>
+        <div class="move-point">
+          <span class="icon">🟠</span>
+          <div><strong data-en="Hip-Dominant Drive" data-zh="髋部主导发力">Hip-Dominant Drive</strong><p data-en="Actively sit back as you descend, hip flexion leads. Knees track in line with toes — no valgus collapse." data-zh="下蹲时主动向后坐，髋屈曲主导。膝盖追随脚尖方向（不内扣）。">Actively sit back as you descend, hip flexion leads. Knees track in line with toes — no valgus collapse.</p></div>
+        </div>
+        <div class="move-point">
+          <span class="icon">🟠</span>
+          <div><strong data-en="Maintain Upright Torso" data-zh="躯干保持直立">Maintain Upright Torso</strong><p data-en="Brace your core, avoid excessive forward lean. Gaze slightly up, maintain neutral spine." data-zh="核心收紧，避免过度前倾。视线微抬，脊柱中立位。">Brace your core, avoid excessive forward lean. Gaze slightly up, maintain neutral spine.</p></div>
+        </div>
+        <div class="move-point">
+          <span class="icon">🟠</span>
+          <div><strong data-en="Heels Stay Grounded" data-zh="脚跟不抬起">Heels Stay Grounded</strong><p data-en="If heels rise, ankle mobility needs work. Use a heel wedge or elevated surface to assist." data-zh="若脚跟易抬，踝关节灵活性需提升。可用斜板或垫高脚跟辅助。">If heels rise, ankle mobility needs work. Use a heel wedge or elevated surface to assist.</p></div>
+        </div>
+        <div class="move-point" style="border-bottom:none;background:rgba(240,136,62,.06);border-radius:8px;padding:8px 10px;margin-top:4px">
+          <span class="icon">⭐</span>
+          <div><strong data-en="Deep Stretch Bonus" data-zh="底部位置拉伸">Deep Stretch Bonus</strong><p data-en="Quads reach maximum stretch at the bottom. Pause 0.5s to amplify the stretch stimulus (stretch-mediated hypertrophy)." data-zh="股四头肌处于最大拉伸位。暂停 0.5 秒可增强拉伸介导的肌肥大刺激。">Quads reach maximum stretch at the bottom. Pause 0.5s to amplify the stretch stimulus.</p></div>
+        </div>
+      </div>
+      <!-- Bench Press -->
+      <div class="move-card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <span style="font-size:24px">🏋️</span>
+          <h3 data-en="Bench Press — Chest-First Drive" data-zh="卧推 — 胸部主动发力">Bench Press — Chest-First Drive</h3>
+        </div>
+        <div class="move-point">
+          <span class="icon">🔵</span>
+          <div><strong data-en="Scapular Retraction & Depression" data-zh="肩胛后缩下沉">Scapular Retraction & Depression</strong><p data-en="Actively retract and depress shoulder blades. Protects shoulder joint and maximizes pec activation." data-zh="背部主动收紧，创造稳定支撑点。保护肩关节，提高胸肌激活。">Actively retract and depress shoulder blades. Protects shoulder joint and maximizes pec activation.</p></div>
+        </div>
+        <div class="move-point">
+          <span class="icon">🔵</span>
+          <div><strong data-en="Chest-First Drive" data-zh="胸部主动发力">Chest-First Drive</strong><p data-en="Imagine pushing both sides of the bar toward each other. Focus on chest contraction, not arm push." data-zh="想象把两侧杠铃向中间夹。专注胸肌收缩感，非手臂推力。">Imagine pushing both sides of the bar toward each other. Focus on chest contraction, not arm push.</p></div>
+        </div>
+        <div class="move-point">
+          <span class="icon">🔵</span>
+          <div><strong data-en="Forearms Perpendicular to Floor" data-zh="小臂垂直地面">Forearms Perpendicular to Floor</strong><p data-en="Adjust grip width so forearms are vertical at the bottom. Optimal force transfer, minimal joint stress." data-zh="握距调整使小臂在底部垂直。力量传导最优，减少关节压力。">Adjust grip width so forearms are vertical at the bottom. Optimal force transfer, minimal joint stress.</p></div>
+        </div>
+        <div class="move-point" style="border-bottom:none;background:rgba(88,166,255,.06);border-radius:8px;padding:8px 10px;margin-top:4px">
+          <span class="icon">⭐</span>
+          <div><strong data-en="Controlled Descent Path" data-zh="下落控制路径">Controlled Descent Path</strong><p data-en="Bar touch point: 2–3cm below nipple line. Follow an arc path on the descent (not straight down)." data-zh="杠铃落点：乳头下方 2-3cm 处。沿弧线路径下落（非垂直）。">Bar touch point: 2–3cm below nipple line. Follow an arc path on descent (not straight down).</p></div>
+        </div>
+      </div>
+    </div>
+    <p class="source" style="margin-top:8px">McGill (2007) Low Back Disorders · Schick et al. (2010) J Strength Cond Res</p>
+  </div>
+</div>
+
+<!-- ── S12: Why Hard Work Fails ── -->
+<div class="slide" id="s12">
+  <div class="slide-inner">
+    <div class="tag" data-en="ROOT CAUSE · 09" data-zh="根本原因 · 09">ROOT CAUSE · 09</div>
+    <h2 data-en="Why Hard Work Doesn't Always Equal Results" data-zh="为什么努力练，却没有效果？">Why Hard Work Doesn't Always Equal Results</h2>
+    <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="step-item"><div class="step-num">01</div><div><strong data-en="Incorrect Force Patterns" data-zh="错误发力模式">Incorrect Force Patterns</strong><p data-en="Compensator muscles dominate — target muscles underactivated and undertrained." data-zh="代偿肌肉做功，目标肌群没有充分参与。">Compensator muscles dominate — target muscles underactivated and undertrained.</p></div></div>
+        <div class="step-item"><div class="step-num blue">02</div><div><strong data-en="Insufficient Joint Mobility" data-zh="关节活动度不足">Insufficient Joint Mobility</strong><p data-en="Can't reach optimal position — stretch stimulus is severely limited, missing the 1.8× stretch bonus." data-zh="无法到达最佳位置，拉伸刺激受限，错失 1.8× 拉伸增益。">Can't reach optimal position — stretch stimulus is severely limited.</p></div></div>
+        <div class="step-item"><div class="step-num gold">03</div><div><strong data-en="Weak Neural Activation" data-zh="神经激活不足">Weak Neural Activation</strong><p data-en="Poor mind-muscle connection — target muscle can't contract fully even when load is adequate." data-zh="大脑-肌肉连接弱，目标肌收缩信号不强，即使负荷充足也无法充分激活。">Poor mind-muscle connection — target muscle can't contract fully even when load is adequate.</p></div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="step-item"><div class="step-num red">04</div><div><strong data-en="Inflated Training Volume" data-zh="训练量虚高">Inflated Training Volume</strong><p data-en="Feels exhausting but target muscle lacks sufficient mechanical tension — high effort, low signal." data-zh="感觉很累但目标肌未获得足够机械张力 — 高消耗，低刺激。">Feels exhausting but target muscle lacks sufficient mechanical tension.</p></div></div>
+        <div class="step-item"><div class="step-num">05</div><div><strong data-en="Poor Movement Quality" data-zh="动作不标准">Poor Movement Quality</strong><p data-en="Uncontrolled eccentric phase wastes critical growth stimulus — the most overlooked mistake." data-zh="离心阶段失控，关键生长刺激大量流失 — 最常被忽略的错误。">Uncontrolled eccentric phase wastes critical growth stimulus.</p></div></div>
+        <div class="card" style="background:rgba(248,81,73,.08);border-color:var(--red);text-align:center;padding:18px">
+          <div style="font-size:42px;font-weight:800;color:var(--red)">80%</div>
+          <p data-en="of trainees have force pathway deviations that silently reduce training effectiveness." data-zh="的训练者存在发力路径偏差，无声地削减训练效果。">of trainees have force pathway deviations that silently reduce training effectiveness.</p>
+          <div style="margin-top:10px;font-size:13px;font-weight:700;color:var(--accent)" data-en="Your effort deserves the right force pathway." data-zh="你的努力，值得被正确的发力路径放大。">Your effort deserves the right force pathway.</div>
+        </div>
+      </div>
+    </div>
+    <p class="source" style="margin-top:8px">Cook & Voight (1994) JOSPT · Schoenfeld (2010) NSCA</p>
+  </div>
+</div>
+
+<!-- ── S13: Corrections ── -->
+<div class="slide" id="s13">
+  <div class="slide-inner">
+    <div class="tag" data-en="SOLUTION · 10" data-zh="解决方案 · 10">SOLUTION · 10</div>
+    <h2 data-en="Functional Training: Correcting Force Pathways" data-zh="功能性训练修正发力路径">Functional Training: Correcting Force Pathways</h2>
+    <div class="three-col" style="margin-top:16px;align-items:start">
+      <!-- Mobility -->
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--accent)" data-en="① IMPROVE JOINT MOBILITY" data-zh="① 提升关节活动度">① IMPROVE JOINT MOBILITY</div>
+        <div class="card" style="padding:11px 13px">
+          <strong data-en="Ankles" data-zh="踝关节">Ankles</strong>
+          <p data-en="Wall ankle stretch · 2×30s each side" data-zh="靠墙弓步伸展 · 每侧 2×30 秒">Wall ankle stretch · 2×30s each side</p>
+        </div>
+        <div class="card" style="padding:11px 13px">
+          <strong data-en="Hip Flexors" data-zh="髋屈肌">Hip Flexors</strong>
+          <p data-en="Kneeling lunge stretch · 2×30s each side" data-zh="跪姿弓步拉伸 · 每侧 2×30 秒">Kneeling lunge stretch · 2×30s each side</p>
+        </div>
+        <div class="card" style="padding:11px 13px">
+          <strong data-en="Thoracic Spine" data-zh="胸椎旋转">Thoracic Spine</strong>
+          <p data-en="Cat-cow + 4-point rotation" data-zh="猫牛式 + 四点支撑旋转">Cat-cow + 4-point rotation</p>
+        </div>
+        <div class="card" style="padding:11px 13px">
+          <strong data-en="Shoulders" data-zh="肩部外旋">Shoulders</strong>
+          <p data-en="Band external rotation · 3×15 reps" data-zh="弹力带外旋 · 3×15 次">Band external rotation · 3×15 reps</p>
+        </div>
+        <div class="card" style="padding:9px 13px;background:rgba(240,136,62,.06);border-color:var(--accent)">
+          <p style="font-size:12px" data-en="Goal: 3–5× per week · Always mobility before training" data-zh="目标：每周 3-5 次 · 先活动后训练">Goal: 3–5× per week · Always mobility before training</p>
+        </div>
+      </div>
+      <!-- Neuromuscular -->
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--accent3)" data-en="② BUILD NEUROMUSCULAR CONNECTION" data-zh="② 强化神经肌肉连接">② BUILD NEUROMUSCULAR CONNECTION</div>
+        <div class="card" style="padding:11px 13px">
+          <strong data-en="Squat" data-zh="深蹲">Squat</strong>
+          <p data-en="Heel-elevated goblet squat (isolate ankle limitation)" data-zh="脚后跟前蹲（分离踝关节限制）">Heel-elevated goblet squat (isolate ankle limitation)</p>
+        </div>
+        <div class="card" style="padding:11px 13px">
+          <strong data-en="Bench Press" data-zh="卧推">Bench Press</strong>
+          <p data-en="Band-around-wrists drill (scapular activation)" data-zh="弹力带环绕练习（肩胛激活）">Band-around-wrists drill (scapular activation)</p>
+        </div>
+        <div class="card" style="padding:11px 13px">
+          <strong data-en="Deadlift" data-zh="硬拉">Deadlift</strong>
+          <p data-en="Bulgarian split squat (unilateral stability)" data-zh="保加利亚分腿蹲（单侧稳定）">Bulgarian split squat (unilateral stability)</p>
+        </div>
+        <div class="card" style="padding:11px 13px">
+          <strong data-en="Curls" data-zh="弯举">Curls</strong>
+          <p data-en="Spider curl (eliminate compensation)" data-zh="蜘蛛弯举（消除代偿）">Spider curl (eliminate compensation)</p>
+        </div>
+        <div class="card" style="padding:9px 13px;background:rgba(88,166,255,.06);border-color:var(--accent3)">
+          <p style="font-size:12px" data-en="Each: 3×8–10 · Focus entirely on the feel" data-zh="每个动作：3×8-10 · 专注心理感受">Each: 3×8–10 · Focus entirely on the feel</p>
+        </div>
+      </div>
+      <!-- Correction Protocol -->
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--accent2)" data-en="③ CORRECT FORCE PATHWAYS" data-zh="③ 修正发力路径">③ CORRECT FORCE PATHWAYS</div>
+        <div class="card" style="padding:11px 13px">
+          <strong data-en="Visual Feedback" data-zh="视觉反馈">Visual Feedback</strong>
+          <p data-en="Mirror or video to verify body position and form" data-zh="镜子 / 录像确认体态">Mirror or video to verify body position and form</p>
+        </div>
+        <div class="card" style="padding:11px 13px">
+          <strong data-en="Kinesthetic Cues" data-zh="动觉提示">Kinesthetic Cues</strong>
+          <p data-en="Hip hinge feel · Chest-led push sensation" data-zh="髋绞链感 · 胸部出发感">Hip hinge feel · Chest-led push sensation</p>
+        </div>
+        <div class="card" style="padding:11px 13px">
+          <strong data-en="Form-First Rule" data-zh="体态优先原则">Form-First Rule</strong>
+          <p data-en="Form first, then load — no exceptions. Never compromise technique for weight." data-zh="先体态再负重，不妥协。永远不以牺牲技术换重量。">Form first, then load — no exceptions.</p>
+        </div>
+        <div class="card" style="padding:11px 13px">
+          <strong data-en="Assessment Cycle" data-zh="评估周期">Assessment Cycle</strong>
+          <p data-en="Film and compare every 4 weeks · Monthly coach check-in" data-zh="每 4 周拍摄对比 · 至少每月一次专项检查">Film and compare every 4 weeks · Monthly coach check-in</p>
+        </div>
+        <div class="card" style="padding:9px 13px;background:rgba(86,211,100,.06);border-color:var(--accent2)">
+          <p style="font-size:12px" data-en="Progressive: form first, then progressively add load" data-zh="渐进原则：先体态再负重，不妥协">Progressive: form first, then progressively add load</p>
+        </div>
+      </div>
+    </div>
+    <p class="source" style="margin-top:8px">Cook (2010) Movement · Page et al. (2010) Janda Approach</p>
+  </div>
+</div>
+
+<!-- ── S14: Summary ── -->
+<div class="slide" id="s14">
+  <div class="slide-inner">
+    <div class="tag" data-en="SUMMARY · KEY TAKEAWAYS" data-zh="总结 · 核心要点">SUMMARY · KEY TAKEAWAYS</div>
+    <h2 data-en="The Science of Hypertrophy — 6 Core Principles" data-zh="肌肉肥大训练科学 — 6 大核心原则">The Science of Hypertrophy — 6 Core Principles</h2>
+    <div class="summary-grid" style="margin-top:16px">
+      <div class="summary-card fade-up d1">
+        <div class="summary-num">01</div>
+        <strong data-en="Mechanical Tension First" data-zh="机械张力优先">Mechanical Tension First</strong>
+        <p data-en="The primary hypertrophy driver. Near failure (RIR 1–3) maximizes motor unit recruitment." data-zh="最主要肥大驱动。接近力竭(RIR 1-3)才能最大化运动单位招募。">The primary hypertrophy driver. Near failure (RIR 1–3) maximizes motor unit recruitment.</p>
+      </div>
+      <div class="summary-card fade-up d2">
+        <div class="summary-num" style="color:var(--accent3)">02</div>
+        <strong data-en="Length > Shortening" data-zh="长度 > 缩短">Length &gt; Shortening</strong>
+        <p data-en="Loaded stretch = 1.8× local growth response. Deep ROM is the key optimization variable." data-zh="负重拉伸 = 1.8× 局部生长反应。深度 ROM 是关键优化点。">Loaded stretch = 1.8× local growth response. Deep ROM is the key optimization variable.</p>
+      </div>
+      <div class="summary-card fade-up d3">
+        <div class="summary-num" style="color:var(--accent2)">03</div>
+        <strong data-en="Frequency Matters" data-zh="频率分拆">Frequency Matters</strong>
+        <p data-en="2–3× per muscle/week · 48h gap · Frequency split improves results by ~25%." data-zh="每周每肌群 2-3 次 · 48h 间隔 · 频率分拆可提升约 25% 效果。">2–3× per muscle/week · 48h gap · Frequency split improves results by ~25%.</p>
+      </div>
+      <div class="summary-card fade-up d4">
+        <div class="summary-num" style="color:var(--gold)">04</div>
+        <strong data-en="Tempo Control" data-zh="节奏控制">Tempo Control</strong>
+        <p data-en="Eccentric 2–3s = peak growth efficiency · ~1.4× that of a 1-second eccentric." data-zh="离心 2-3 秒 = 峰值生长效率 · 约为 1 秒离心的 1.4 倍。">Eccentric 2–3s = peak growth efficiency · ~1.4× that of a 1-second eccentric.</p>
+      </div>
+      <div class="summary-card fade-up d5">
+        <div class="summary-num" style="color:var(--red)">05</div>
+        <strong data-en="Posture is the Foundation" data-zh="体态是根本">Posture is the Foundation</strong>
+        <p data-en="Wrong force pathway = diminishing returns, no matter how hard you train." data-zh="发力路径不对 · 再勤奋也事倍功半 · 体态问题先于训练量。">Wrong force pathway = diminishing returns, no matter how hard you train.</p>
+      </div>
+      <div class="summary-card fade-up d6">
+        <div class="summary-num" style="color:var(--accent4)">06</div>
+        <strong data-en="Technique is Everything" data-zh="技术是核心">Technique is Everything</strong>
+        <p data-en="Squat hip-dominant · Bench with scapular retraction · Make the target muscle actually do the work." data-zh="深蹲髋部主导 · 卧推肩胛后缩 · 让目标肌真正做功。">Squat hip-dominant · Bench with scapular retraction · Make the target muscle actually do the work.</p>
+      </div>
+    </div>
+    <div style="margin-top:14px;padding:12px 20px;background:rgba(240,136,62,.08);border:1px solid var(--accent);border-radius:10px;text-align:center;font-size:13px;font-style:italic">
+      <span data-en="&ldquo;The essence of training science: right method, right muscle, sufficient stimulus, and full recovery.&rdquo;" data-zh="&ldquo;训练科学的本质：用正确的方法，给正确的肌肉，施加足够的刺激，并充分恢复。&rdquo;">&ldquo;The essence of training science: right method, right muscle, sufficient stimulus, and full recovery.&rdquo;</span>
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--text2);margin-top:8px">By Kyle · Performance Coaching · The Science of Hypertrophy Training · 2025</p>
+  </div>
+</div>
+
+<!-- ── S15: Q&A ── -->
+<div class="slide" id="s15" style="background:radial-gradient(ellipse at 50% 40%, #1a1208 0%, var(--bg) 68%)">
+  <div class="slide-inner" style="display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center">
+    <!-- Pushpin icon -->
+    <div style="position:relative;display:inline-block;width:64px;height:72px;margin-bottom:4px">
+      <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:36px;height:36px;border-radius:50%;background:var(--accent);box-shadow:0 0 24px rgba(240,136,62,.5)"></div>
+      <div style="position:absolute;top:28px;left:50%;transform:translateX(-50%);width:6px;height:44px;background:linear-gradient(to bottom,var(--accent),rgba(240,136,62,.3));border-radius:0 0 4px 4px"></div>
+    </div>
+    <div>
+      <div class="tag" data-en="OPEN DISCUSSION" data-zh="开放讨论">OPEN DISCUSSION</div>
+      <h1 style="font-size:clamp(48px,7vw,88px);font-weight:900;color:var(--accent);line-height:1;letter-spacing:-2px">Q&amp;A</h1>
+      <p style="font-size:clamp(15px,1.8vw,20px);color:var(--text2);margin-top:6px" data-en="Questions · Discussion · Feedback" data-zh="提问 · 讨论 · 反馈">Questions · Discussion · Feedback</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;width:100%;max-width:800px">
+      <div class="card" style="background:rgba(240,136,62,.07);border-color:var(--accent);padding:16px 18px">
+        <div style="font-size:22px;margin-bottom:6px">🎯</div>
+        <strong style="font-size:13px" data-en="Topic Questions" data-zh="内容提问">Topic Questions</strong>
+        <p style="margin-top:4px;font-size:12px" data-en="Ask anything about hypertrophy, mechanisms, or movement science." data-zh="关于肌肉肥大、训练机制、动作技术的任何问题。">Ask anything about hypertrophy, mechanisms, or movement science.</p>
+      </div>
+      <div class="card" style="background:rgba(86,211,100,.07);border-color:var(--accent2);padding:16px 18px">
+        <div style="font-size:22px;margin-bottom:6px">💬</div>
+        <strong style="font-size:13px" data-en="Application" data-zh="实际应用">Application</strong>
+        <p style="margin-top:4px;font-size:12px" data-en="How to apply these principles to your own training program." data-zh="如何将这些原则落地应用到自己的训练计划中。">How to apply these principles to your own training program.</p>
+      </div>
+      <div class="card" style="background:rgba(88,166,255,.07);border-color:var(--accent3);padding:16px 18px">
+        <div style="font-size:22px;margin-bottom:6px">📋</div>
+        <strong style="font-size:13px" data-en="Feedback" data-zh="课程反馈">Feedback</strong>
+        <p style="margin-top:4px;font-size:12px" data-en="Share your thoughts on this session and what to cover next time." data-zh="分享对本次课程的感想，以及下次希望深入的方向。">Share your thoughts on this session and what to cover next time.</p>
+      </div>
+    </div>
+    <div style="padding:14px 28px;background:rgba(240,136,62,.08);border:1px solid var(--accent);border-radius:12px;max-width:600px">
+      <p style="font-size:13px;font-style:italic;color:var(--text2)" data-en="&ldquo;No question is too basic. The only bad question is the one that goes unasked.&rdquo;" data-zh="&ldquo;没有太基础的问题，唯一不好的问题是没有问出口的问题。&rdquo;">&ldquo;No question is too basic. The only bad question is the one that goes unasked.&rdquo;</p>
+    </div>
+    <p style="font-size:12px;color:var(--text2)">By Kyle · Performance Coaching · The Science of Hypertrophy Training · 2025</p>
+  </div>
+</div>
+
+</div><!-- /slideshow -->
+
+<!-- Bottom Navigation -->
+<div id="nav">
+  <button id="btn-prev" onclick="changeSlide(-1)" disabled>← <span data-en="Prev" data-zh="上一页">Prev</span></button>
+  <div class="dot-nav" id="dots"></div>
+  <button id="btn-next" onclick="changeSlide(1)"><span data-en="Next" data-zh="下一页">Next</span> →</button>
+</div>
+<div id="key-hint" data-en="← → keys or click dots to navigate" data-zh="← → 键或点击圆点导航">← → keys to navigate</div>
+
+<script>
+let currentSlide = 0;
+let currentLang = 'en';
+const totalSlides = 15;
+let charts = {};
+
+function changeSlide(dir) {
+  const slides = document.querySelectorAll('.slide');
+  slides[currentSlide].classList.remove('active');
+  slides[currentSlide].classList.add('prev');
+  setTimeout(() => slides[currentSlide].classList.remove('prev'), 400);
+  currentSlide = Math.max(0, Math.min(totalSlides - 1, currentSlide + dir));
+  slides[currentSlide].classList.add('active');
+  updateNav();
+  initChartsForSlide(currentSlide);
+}
+
+function goToSlide(n) {
+  if (n === currentSlide) return;
+  const slides = document.querySelectorAll('.slide');
+  slides[currentSlide].classList.remove('active');
+  currentSlide = n;
+  slides[currentSlide].classList.add('active');
+  updateNav();
+  initChartsForSlide(currentSlide);
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = currentSlide === 0;
+  document.getElementById('btn-next').disabled = currentSlide === totalSlides - 1;
+  document.getElementById('slide-counter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+  document.querySelectorAll('#sidenav .sidenav-item').forEach((el, i) => el.classList.toggle('active', i === currentSlide));
+}
+
+/* Build dots */
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < totalSlides; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.onclick = () => goToSlide(i);
+  dotsEl.appendChild(d);
+}
+
+/* Keyboard */
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+});
+
+/* Language */
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-zh').classList.toggle('active', lang === 'zh');
+  document.querySelectorAll('[data-en]').forEach(el => {
+    el.innerHTML = lang === 'zh' ? el.dataset.zh : el.dataset.en;
+  });
+  updateMechanismsChartLang(lang);
+}
+
+/* Chart defaults */
+Chart.defaults.color = '#8b949e';
+Chart.defaults.borderColor = '#30363d';
+Chart.defaults.font.family = "-apple-system,'Segoe UI',system-ui,sans-serif";
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+function initChartsForSlide(n) {
+  if (n === 2) initMechanismsChart();
+  if (n === 3) initRIRChart();
+  if (n === 4) initRecruitmentChart();
+  if (n === 5) initPeriodizationChart();
+  if (n === 6) initStretchChart();
+  if (n === 7) initFrequencyChart();
+  if (n === 8) initTempoChart();
+}
+
+/* S3: Mechanisms chart */
+const mechLabels = {
+  en: { axes: ['Evidence Strength','Consistency','Practical Impact','Research Consensus'], ds: ['Mechanical Tension','Metabolic Stress','Muscle Damage'], yTitle: 'Score (0–100)' },
+  zh: { axes: ['证据强度','一致性','实际效果','研究共识'], ds: ['机械张力','代谢压力','肌肉损伤'], yTitle: '得分 (0–100)' }
+};
+function initMechanismsChart() {
+  if (charts['mech']) return;
+  const ctx = document.getElementById('chart-mechanisms').getContext('2d');
+  const L = mechLabels[currentLang];
+  charts['mech'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: L.axes,
+      datasets: [
+        { label: L.ds[0], data: [95, 92, 96, 94], backgroundColor: 'rgba(240,136,62,0.7)', borderRadius: 5 },
+        { label: L.ds[1], data: [65, 60, 55, 58], backgroundColor: 'rgba(88,166,255,0.6)', borderRadius: 5 },
+        { label: L.ds[2], data: [35, 30, 25, 28], backgroundColor: 'rgba(139,148,158,0.5)', borderRadius: 5 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } },
+      scales: {
+        y: { max: 100, title: { display: true, text: L.yTitle }, grid: { color: '#21262d' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+}
+function updateMechanismsChartLang(lang) {
+  const c = charts['mech'];
+  if (!c) return;
+  const L = mechLabels[lang];
+  c.data.labels = L.axes;
+  c.data.datasets[0].label = L.ds[0];
+  c.data.datasets[1].label = L.ds[1];
+  c.data.datasets[2].label = L.ds[2];
+  c.options.scales.y.title.text = L.yTitle;
+  c.update();
+}
+
+/* S4: RIR chart + slider */
+function initRIRChart() {
+  if (charts['rir']) return;
+  const ctx = document.getElementById('chart-rir').getContext('2d');
+  const rirValues = [0,1,2,3,4,5,6,7,8];
+  const recruitment = [100, 97, 90, 80, 60, 38, 20, 10, 5];
+  charts['rir'] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: rirValues.map(v => `RIR ${v}`),
+      datasets: [{
+        label: 'Motor Unit Recruitment (%)',
+        data: recruitment,
+        borderColor: 'rgba(180,180,180,0.45)', backgroundColor: 'rgba(180,180,180,0.06)',
+        fill: true, tension: 0.4, pointRadius: 7, pointHoverRadius: 9, pointBackgroundColor: rirValues.map(v =>
+          v === 0 ? '#f85149' : v <= 2 ? '#56d364' : v === 3 ? '#f0883e' : v <= 5 ? '#e3b341' : '#f85149'
+        )
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { min: 0, max: 110, title: { display: true, text: 'Motor Unit Recruitment (%)' }, grid: { color: '#21262d' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  const slider = document.getElementById('rir-slider');
+  const result = document.getElementById('rir-result');
+  function updateRIR() {
+    const v = parseInt(slider.value);
+    const rec = recruitment[v];
+    let msg, color;
+    if (v === 0) { msg = currentLang === 'zh' ? '🔴 真正力竭 — 谨慎使用（约20%组数）' : '🔴 True failure — use sparingly (~20% of sets)'; color = '#f85149'; }
+    else if (v <= 2) { msg = currentLang === 'zh' ? '🟢 最佳区间 — 最大化机械张力' : '🟢 Optimal zone — maximum mechanical tension'; color = '#56d364'; }
+    else if (v === 3) { msg = currentLang === 'zh' ? '🟠 有效区间 — 接近力竭的上限' : '🟠 Effective zone — upper boundary of near-failure'; color = '#f0883e'; }
+    else if (v <= 5) { msg = currentLang === 'zh' ? '🟡 次优区间 — 招募不完全' : '🟡 Suboptimal — incomplete recruitment'; color = '#e3b341'; }
+    else { msg = currentLang === 'zh' ? '🔴 无效区间 — 高阈值纤维未被招募' : '🔴 Ineffective — high-threshold fibers not recruited'; color = '#f85149'; }
+    result.innerHTML = `<span style="color:${color}">RIR ${v} → ${rec}% recruitment — ${msg}</span>`;
+  }
+  slider.addEventListener('input', updateRIR);
+  updateRIR();
+}
+
+/* S5: Recruitment chart */
+function initRecruitmentChart() {
+  if (charts['rec']) return;
+  const ctx = document.getElementById('chart-recruitment').getContext('2d');
+  charts['rec'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['30% 1RM\n(Light)', '50% 1RM\n(Moderate)', '70% 1RM\n(Heavy)', '85% 1RM\n(Very Heavy)'],
+      datasets: [
+        { label: 'At Comfortable Effort (RIR 5+)', data: [15, 35, 55, 75], backgroundColor: 'rgba(139,148,158,0.5)', borderRadius: 5 },
+        { label: 'Near Failure (RIR ≤ 3)', data: [96, 97, 98, 99], backgroundColor: 'rgba(240,136,62,0.75)', borderRadius: 5 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } },
+      scales: {
+        y: { max: 110, title: { display: true, text: 'Type II Fiber Recruitment (%)' }, grid: { color: '#21262d' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+}
+
+/* S6: Periodization line */
+function initPeriodizationChart() {
+  if (charts['period']) return;
+  const ctx = document.getElementById('chart-periodization').getContext('2d');
+  charts['period'] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Wk 1','Wk 2','Wk 3','Wk 4','Wk 5','Wk 6','Deload'],
+      datasets: [
+        { label: 'RIR Target', data: [4, 3, 3, 2, 1, 0, 5], borderColor: '#f0883e', backgroundColor: 'rgba(240,136,62,0.1)', fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: '#f0883e' },
+        { label: 'Fatigue Level', data: [2, 3, 4, 5, 7, 9, 2], borderColor: '#f85149', backgroundColor: 'rgba(248,81,73,0.08)', fill: true, tension: 0.4, pointRadius: 4, borderDash: [5,3] }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } },
+      scales: {
+        y: { min: 0, max: 10, title: { display: true, text: 'Scale (0–10)' }, grid: { color: '#21262d' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+}
+
+/* S7: Stretch chart */
+function initStretchChart() {
+  if (charts['stretch']) return;
+  const ctx = document.getElementById('chart-stretch').getContext('2d');
+  charts['stretch'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Shortened Position\n(Peak Contraction)', 'Mid-Range', 'Lengthened Position\n(Deep Stretch)'],
+      datasets: [
+        { label: 'Regional Hypertrophy Response', data: [0.55, 0.82, 1.0], backgroundColor: ['rgba(139,148,158,0.5)','rgba(88,166,255,0.5)','rgba(240,136,62,0.8)'], borderRadius: 6 },
+        { label: 'Whole-Muscle Average', data: [0.60, 0.75, 0.85], backgroundColor: ['rgba(139,148,158,0.2)','rgba(88,166,255,0.2)','rgba(240,136,62,0.3)'], borderRadius: 6, borderWidth: 1, borderColor: ['#8b949e','#58a6ff','#f0883e'] }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${(ctx.raw * 1.8).toFixed(2)}× relative (normalized)` } }
+      },
+      scales: {
+        y: { title: { display: true, text: 'Relative Hypertrophy (normalized)' }, grid: { color: '#21262d' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+}
+
+/* S8: Frequency */
+function initFrequencyChart() {
+  if (charts['freq']) return;
+  const ctx = document.getElementById('chart-frequency').getContext('2d');
+  charts['freq'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['1×/week', '2×/week', '3×/week'],
+      datasets: [{
+        label: 'Relative Hypertrophy Gain (%)',
+        data: [80, 100, 105],
+        backgroundColor: ['rgba(139,148,158,0.5)', 'rgba(86,211,100,0.7)', 'rgba(240,136,62,0.8)'],
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { label: ctx => `${ctx.raw}% relative gain` } }
+      },
+      scales: {
+        y: { min: 70, max: 115, title: { display: true, text: 'Relative Hypertrophy (%)' }, grid: { color: '#21262d' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+}
+
+/* S9: Tempo */
+function initTempoChart() {
+  if (charts['tempo']) return;
+  const ctx = document.getElementById('chart-tempo').getContext('2d');
+  charts['tempo'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['1s Eccentric', '2s Eccentric', '3s Eccentric', '4s Eccentric', '6s Eccentric'],
+      datasets: [{
+        label: 'Relative MPS Rate',
+        data: [70, 90, 100, 98, 88],
+        backgroundColor: ['rgba(139,148,158,0.5)','rgba(240,136,62,0.55)','rgba(240,136,62,0.85)','rgba(240,136,62,0.65)','rgba(240,136,62,0.45)'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { label: ctx => `MPS Rate: ${ctx.raw}% of optimal` } }
+      },
+      scales: {
+        y: { min: 55, max: 110, title: { display: true, text: 'Relative MPS Rate (%)' }, grid: { color: '#21262d' } },
+        x: { title: { display: true, text: 'Eccentric Phase Duration' }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+initChartsForSlide(0);
+</script>
+</body>
+</html>
