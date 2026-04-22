@@ -127,7 +127,7 @@
       transform: none !important;
       opacity: 1 !important;
       pointer-events: auto !important;
-      min-height: auto !important;
+      min-height: calc(100vh - 88px) !important;
       padding: 70px 16px 80px !important;
       justify-content: flex-start !important;
       align-items: flex-start !important;
@@ -136,6 +136,10 @@
     }
     .slide.active { display: flex !important; }
     .slide.prev { display: none !important; }
+    #s1, #s10, #s12, #s15 {
+      justify-content: center !important;
+      align-items: center !important;
+    }
     #slideshow {
       position: static !important;
       overflow: visible !important;
