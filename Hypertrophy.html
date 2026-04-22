@@ -1232,28 +1232,35 @@ function closeNav() {
 initChartsForSlide(0);
 </script>
 <div id="sidenav-overlay" onclick="closeNav()"></div>
-
-  <!-- ✅ Button placed BEFORE </body> -->
-  <div style="
+<!-- ✅ Button placed BEFORE </body> -->
+<style>
+  #home-btn {
     position: fixed;
     top: 15px;
     right: 15px;
     z-index: 99999;
+  }
+  @media (max-width: 768px) {
+    #home-btn {
+      top: 55px;
+      right: 15px;
+    }
+  }
+</style>
+<div id="home-btn">
+  <a href="index.html" style="
+    display: inline-block;
+    padding: 8px 14px;
+    background: #3b82f6;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   ">
-    <a href="index.html" style="
-      display: inline-block;
-      padding: 8px 14px;
-      background: #3b82f6;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: bold;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    ">
-      ← Back to Home
-    </a>
-  </div>
-
+    ← Back to Nutrition
+  </a>
+</div>
 </body>
 </html>
