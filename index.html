@@ -1395,12 +1395,22 @@ initChartsForSlide(0);
 </script>
 <div id="sidenav-overlay" onclick="closeNav()"></div>
 <!-- ✅ Button placed BEFORE </body> -->
-<div style="
-  position: fixed;
-  top: 15px;
-  right: 15px;
-  z-index: 99999;
-">
+<style>
+  #hypertrophy-btn {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 99999;
+  }
+  @media (max-width: 768px) {
+    #hypertrophy-btn {
+      top: auto;
+      bottom: 80px;
+      right: 15px;
+    }
+  }
+</style>
+<div id="hypertrophy-btn">
   <a href="Hypertrophy.html" style="
     display: inline-block;
     padding: 8px 14px;
