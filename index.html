@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nutrition for Hypertrophy & Cutting | Performance Coaching</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --accent4: #d2a8ff;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --gold: #e3b341;
+    --red: #f85149;
+    --border: #30363d;
+    --card: #21262d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    user-select: none;
+  }
+
+  /* ── Top Controls ── */
+  #controls {
+    position: fixed; top: 0; left: 196px; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 20px; z-index: 100;
+    background: rgba(13,17,23,0.92);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+  }
+  /* Sidenav top cap — same height as controls bar */
+  #sidenav-top {
+    position: fixed; top: 0; left: 0; width: 196px; height: 44px;
+    background: rgba(13,17,23,0.92); border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border); z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(8px);
+  }
+  #sidenav-top span { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: var(--text2); text-transform: uppercase; }
+  #controls .brand { font-size: 12px; color: var(--text2); letter-spacing: 1px; text-transform: uppercase; }
+  #lang-toggle {
+    display: flex; gap: 4px; background: var(--surface2); border-radius: 20px; padding: 3px;
+  }
+  #lang-toggle button {
+    border: none; cursor: pointer; padding: 5px 16px; border-radius: 16px;
+    font-size: 13px; font-weight: 600; transition: all .25s;
+    background: transparent; color: var(--text2);
+  }
+  #lang-toggle button.active { background: var(--accent); color: #fff; }
+  #slide-counter { font-size: 13px; color: var(--text2); }
+
+  /* ── Slideshow ── */
+  #slideshow {
+    position: fixed; top: 44px; left: 196px; right: 0; bottom: 44px;
+    overflow: hidden;
+  }
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 32px 48px;
+    opacity: 0; pointer-events: none;
+    transform: translateX(60px);
+    transition: all .4s cubic-bezier(.4,0,.2,1);
+  }
+  .slide.active {
+    opacity: 1; pointer-events: all;
+    transform: translateX(0);
+  }
+  .slide.prev {
+    opacity: 0; transform: translateX(-60px);
+  }
+
+  /* ── Navigation ── */
+  #nav {
+    position: fixed; bottom: 0; left: 196px; right: 0;
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    padding: 8px 20px; background: rgba(13,17,23,0.92);
+    border-top: 1px solid var(--border); backdrop-filter: blur(8px);
+  }
+  #nav button {
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    padding: 6px 20px; border-radius: 20px; cursor: pointer; font-size: 14px;
+    transition: all .2s;
+  }
+  #nav button:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+  #nav button:disabled { opacity: .3; cursor: not-allowed; }
+  .dot-nav { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: center; max-width: 60vw; }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); cursor: pointer; transition: all .2s;
+    flex-shrink: 0;
+  }
+  .dot.active { background: var(--accent); transform: scale(1.4); }
+
+  /* ── Typography ── */
+  .tag { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+  h1 { font-size: clamp(28px, 4vw, 52px); font-weight: 800; line-height: 1.1; }
+  h2 { font-size: clamp(20px, 2.8vw, 36px); font-weight: 700; line-height: 1.2; margin-bottom: 6px; }
+  h3 { font-size: clamp(15px, 1.8vw, 22px); font-weight: 600; }
+  p, li { font-size: clamp(13px, 1.3vw, 16px); line-height: 1.6; color: var(--text2); }
+  .highlight { color: var(--accent); font-weight: 700; }
+  .highlight2 { color: var(--accent2); font-weight: 700; }
+  .highlight3 { color: var(--accent3); font-weight: 700; }
+
+  /* ── Layout Helpers ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; width: 100%; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; width: 100%; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .card.accent-border { border-color: var(--accent); }
+  .card.green-border { border-color: var(--accent2); }
+  .card.red-border { border-color: var(--accent3); }
+  .stat-big { font-size: clamp(32px, 4vw, 56px); font-weight: 800; color: var(--accent); line-height: 1; }
+  .stat-unit { font-size: 14px; color: var(--text2); }
+  .chart-wrap { width: 100%; position: relative; }
+  .chart-wrap canvas { max-height: 280px; }
+  .source { font-size: 11px; color: var(--text2); opacity: .6; margin-top: 8px; }
+
+  /* ── Slide 1 (Title) ── */
+  #s1 { background: radial-gradient(ellipse at 30% 50%, #1a2744 0%, var(--bg) 70%); text-align: center; }
+  #s1 .subtitle { font-size: clamp(14px, 1.8vw, 20px); color: var(--text2); margin-top: 12px; }
+  #s1 .pill {
+    display: inline-flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    margin-top: 20px;
+  }
+  #s1 .pill span {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 5px 14px; font-size: 13px; color: var(--accent);
+  }
+  #s1 .author { margin-top: 28px; font-size: 14px; color: var(--text2); }
+
+  /* ── Slide 2 ── */
+  #s2 .problem-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  #s2 .problem-list li {
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 16px; display: flex; align-items: flex-start; gap: 10px;
+  }
+  #s2 .problem-list li .arrow { color: var(--accent3); font-weight: 700; flex-shrink: 0; }
+  #s2 .var-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 4px; }
+  #s2 .var-card {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px; text-align: center;
+  }
+  #s2 .var-card .num { font-size: 28px; font-weight: 800; color: var(--accent); }
+  #s2 .var-card h4 { font-size: 16px; font-weight: 700; margin: 4px 0; }
+
+  /* ── Protein slider ── */
+  .slider-wrap { width: 100%; }
+  .slider-wrap input[type=range] {
+    width: 100%; accent-color: var(--accent); cursor: pointer; height: 6px;
+  }
+  .slider-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); }
+
+  /* ── Step cards ── */
+  .step-list { display: flex; flex-direction: column; gap: 10px; }
+  .step-item {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 16px;
+  }
+  .step-num {
+    min-width: 32px; height: 32px; border-radius: 50%; background: var(--accent);
+    color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+  .step-num.green { background: var(--accent2); }
+  .step-num.red { background: var(--accent3); }
+
+  /* ── Template Table ── */
+  .tmpl-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .tmpl-table th {
+    background: var(--surface2); padding: 10px 14px; text-align: left;
+    border-bottom: 2px solid var(--border); font-weight: 600;
+  }
+  .tmpl-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  .tmpl-table tr:hover td { background: var(--surface2); }
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 12px;
+    font-size: 12px; font-weight: 600;
+  }
+  .badge-blue { background: rgba(88,166,255,.2); color: var(--accent); }
+  .badge-green { background: rgba(63,185,80,.2); color: var(--accent2); }
+  .badge-orange { background: rgba(227,179,65,.2); color: var(--gold); }
+
+  /* ── LPL Visualization ── */
+  .lpl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .lpl-card {
+    border-radius: 12px; padding: 20px; text-align: center;
+    border: 1px solid;
+  }
+  .lpl-high { background: rgba(248,81,73,.08); border-color: var(--red); }
+  .lpl-low { background: rgba(63,185,80,.08); border-color: var(--accent2); }
+  .lpl-icon { font-size: 36px; margin-bottom: 8px; }
+  .lpl-bar-wrap { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .lpl-bar-row { display: flex; align-items: center; gap: 10px; }
+  .lpl-bar-label { font-size: 12px; color: var(--text2); width: 100px; text-align: right; flex-shrink: 0; }
+  .lpl-bar-track { flex: 1; background: var(--surface2); border-radius: 4px; height: 18px; overflow: hidden; }
+  .lpl-bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; }
+  .lpl-bar-fill span { font-size: 11px; font-weight: 700; color: #fff; }
+
+  /* ── Refs ── */
+  .ref-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .ref-list li { font-size: 12px; color: var(--text2); padding: 6px 10px; background: var(--card); border-radius: 6px; border-left: 2px solid var(--accent); }
+
+  /* ── Animated pulse ── */
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+  .fade-up { animation: fadeUp .5s both; }
+  .fa-d1 { animation-delay: .1s; }
+  .fa-d2 { animation-delay: .2s; }
+  .fa-d3 { animation-delay: .3s; }
+  .fa-d4 { animation-delay: .4s; }
+  .fa-d5 { animation-delay: .5s; }
+
+  /* Keyboard hint */
+  #key-hint { position: fixed; bottom: 52px; right: 16px; font-size: 11px; color: var(--text2); opacity: .5; left: 196px; text-align: right; }
+
+  /* Wide layout for slides with chart */
+  .slide-inner { width: 100%; max-width: 1100px; }
+  .full-w { width: 100%; }
+
+  /* ── Left Sidenav ── */
+  #sidenav {
+    position: fixed; top: 44px; left: 0; bottom: 44px;
+    width: 196px; background: rgba(13,17,23,0.97);
+    border-right: 1px solid var(--border); z-index: 90;
+    overflow-y: auto; display: flex; flex-direction: column;
+    backdrop-filter: blur(10px);
+  }
+  #sidenav::-webkit-scrollbar { width: 3px; }
+  #sidenav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .sidenav-section {
+    font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text2); padding: 14px 12px 5px; opacity: .55;
+    border-top: 1px solid var(--border); margin-top: 4px;
+  }
+  .sidenav-section:first-child { border-top: none; margin-top: 0; }
+  .sidenav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 12px; cursor: pointer; transition: all .18s;
+    border-left: 2px solid transparent; text-decoration: none;
+  }
+  .sidenav-item:hover { background: var(--surface2); }
+  .sidenav-item.active {
+    background: rgba(88,166,255,.1); border-left-color: var(--accent);
+  }
+  .sidenav-num {
+    font-size: 10px; font-weight: 700; min-width: 18px;
+    color: var(--text2); flex-shrink: 0; text-align: center;
+  }
+  .sidenav-item.active .sidenav-num { color: var(--accent); }
+  .sidenav-label {
+    font-size: 11.5px; color: var(--text2); line-height: 1.35;
+  }
+  .sidenav-item.active .sidenav-label { color: var(--text); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- Controls -->
+<div id="controls">
+  <span class="brand">Performance Coaching · 2026</span>
+  <div id="lang-toggle">
+    <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+    <button id="btn-zh" onclick="setLang('zh')">中文</button>
+  </div>
+  <span id="slide-counter">1 / 15</span>
+</div>
+
+<!-- Sidenav top cap -->
+<div id="sidenav-top"><span data-en="SLIDE INDEX" data-zh="幻灯片目录">SLIDE INDEX</span></div>
+
+<!-- Left Sidenav -->
+<div id="sidenav">
+  <div class="sidenav-section" data-en="PART I · NUTRITION" data-zh="第一部分 · 营养">PART I · NUTRITION</div>
+  <div class="sidenav-item active" onclick="goToSlide(0)"><span class="sidenav-num">01</span><span class="sidenav-label" data-en="Title" data-zh="标题">Title</span></div>
+  <div class="sidenav-item" onclick="goToSlide(1)"><span class="sidenav-num">02</span><span class="sidenav-label" data-en="Why No Results" data-zh="为何没变化">Why No Results</span></div>
+  <div class="sidenav-item" onclick="goToSlide(2)"><span class="sidenav-num">03</span><span class="sidenav-label" data-en="Energy Balance" data-zh="能量平衡">Energy Balance</span></div>
+  <div class="sidenav-item" onclick="goToSlide(3)"><span class="sidenav-num">04</span><span class="sidenav-label" data-en="Protein Targets" data-zh="蛋白质目标">Protein Targets</span></div>
+  <div class="sidenav-item" onclick="goToSlide(4)"><span class="sidenav-num">05</span><span class="sidenav-label" data-en="Per-Meal Protein" data-zh="每餐蛋白质">Per-Meal Protein</span></div>
+  <div class="sidenav-item" onclick="goToSlide(5)"><span class="sidenav-num">06</span><span class="sidenav-label" data-en="Carbohydrates" data-zh="碳水化合物">Carbohydrates</span></div>
+  <div class="sidenav-item" onclick="goToSlide(6)"><span class="sidenav-num">07</span><span class="sidenav-label" data-en="Dietary Fat" data-zh="膳食脂肪">Dietary Fat</span></div>
+  <div class="sidenav-item" onclick="goToSlide(7)"><span class="sidenav-num">08</span><span class="sidenav-label" data-en="Meal Frequency" data-zh="进餐频率">Meal Frequency</span></div>
+  <div class="sidenav-item" onclick="goToSlide(8)"><span class="sidenav-num">09</span><span class="sidenav-label" data-en="Diet Breaks" data-zh="饮食休息">Diet Breaks</span></div>
+  <div class="sidenav-item" onclick="goToSlide(9)"><span class="sidenav-num">10</span><span class="sidenav-label" data-en="Bulk vs. Cut" data-zh="实操模板">Bulk vs. Cut</span></div>
+  <div class="sidenav-section" data-en="PART II · SPOT FAT" data-zh="第二部分 · 局部减脂">PART II · SPOT FAT</div>
+  <div class="sidenav-item" onclick="goToSlide(10)"><span class="sidenav-num">11</span><span class="sidenav-label" data-en="Spot Reduction" data-zh="局部减脂">Spot Reduction</span></div>
+  <div class="sidenav-item" onclick="goToSlide(11)"><span class="sidenav-num">12</span><span class="sidenav-label" data-en="What Is LPL" data-zh="什么是LPL">What Is LPL</span></div>
+  <div class="sidenav-item" onclick="goToSlide(12)"><span class="sidenav-num">13</span><span class="sidenav-label" data-en="Regional Fat Loss" data-zh="局部减脂难度">Regional Fat Loss</span></div>
+  <div class="sidenav-item" onclick="goToSlide(13)"><span class="sidenav-num">14</span><span class="sidenav-label" data-en="Summary" data-zh="总结">Summary</span></div>
+  <div class="sidenav-section" data-en="WRAP UP" data-zh="结语">WRAP UP</div>
+  <div class="sidenav-item" onclick="goToSlide(14)"><span class="sidenav-num">15</span><span class="sidenav-label" data-en="Q &amp; A" data-zh="问与答">Q &amp; A</span></div>
+</div>
+
+<!-- Slides -->
+<div id="slideshow">
+
+  <!-- ─────────────── S1: Title ─────────────── -->
+  <div class="slide active" id="s1">
+    <div style="text-align:center">
+      <div class="tag" data-en="PERFORMANCE COACHING" data-zh="PERFORMANCE COACHING">PERFORMANCE COACHING</div>
+      <h1 style="margin-top:8px">
+        <span data-en="Muscle Gain &amp; Fat Loss" data-zh="增肌与减脂">Muscle Gain &amp; Fat Loss</span><br>
+        <span style="color:var(--accent)" data-en="Nutrition Guide" data-zh="营养指南">Nutrition Guide</span>
+      </h1>
+      <div class="subtitle" data-en="Nutrition for Hypertrophy &amp; Cutting" data-zh="增肌与减脂的营养指南">Nutrition for Hypertrophy &amp; Cutting</div>
+      <div class="pill">
+        <span data-en="Evidence-Based · Meta-Analysis" data-zh="基于 Meta-Analysis">Evidence-Based · Meta-Analysis</span>
+        <span data-en="Actionable Strategies" data-zh="可操作的实战策略">Actionable Strategies</span>
+        <span data-en="Break Through Your Plateau" data-zh="突破训练瓶颈">Break Through Your Plateau</span>
+      </div>
+      <div class="author" data-en="By Kyle · Performance Coaching · 2026" data-zh="By Kyle · Performance Coaching · 2026">By Kyle · Performance Coaching · 2026</div>
+    </div>
+  </div>
+
+  <!-- ─────────────── S2: Why not seeing results ─────────────── -->
+  <div class="slide" id="s2">
+    <div class="slide-inner">
+      <div class="tag" data-en="INTRO · 01" data-zh="简介 · 01">INTRO · 01</div>
+      <h2 data-en="Why Aren't You Seeing Results?" data-zh="为什么你练了，还是没变化？">Why Aren't You Seeing Results?</h2>
+      <div class="two-col" style="margin-top:20px; align-items:stretch">
+        <div style="display:flex;flex-direction:column;justify-content:center">
+          <h3 style="margin-bottom:12px" data-en="Most people stall because of just 3 things:" data-zh="大多数人卡住，只因为这三件事：">Most people stall because of just 3 things:</h3>
+          <ul class="problem-list">
+            <li class="fade-up fa-d1">
+              <span class="arrow">✕</span>
+              <div>
+                <strong data-en="Training hard but not controlling calories" data-zh="训练够猛，但热量没控制">Training hard but not controlling calories</strong>
+                <div class="arrow" style="font-size:13px" data-en="→ wasted effort" data-zh="→ 练了难见效">→ wasted effort</div>
+              </div>
+            </li>
+            <li class="fade-up fa-d2">
+              <span class="arrow">✕</span>
+              <div>
+                <strong data-en="Eating little but not enough protein" data-zh="吃得很少，但蛋白质不够">Eating little but not enough protein</strong>
+                <div class="arrow" style="font-size:13px" data-en="→ you're losing muscle" data-zh="→ 掉的是肌肉">→ you're losing muscle</div>
+              </div>
+            </li>
+            <li class="fade-up fa-d3">
+              <span class="arrow">✕</span>
+              <div>
+                <strong data-en="Everything right but no consistency" data-zh="什么都对，但没有坚持">Everything right but no consistency</strong>
+                <div class="arrow" style="font-size:13px" data-en="→ even the best plan fails" data-zh="→ 再好的计划也没用">→ even the best plan fails</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:center">
+          <h3 style="margin-bottom:12px" data-en="Master These 3 Variables" data-zh="掌握这 3 个变量">Master These 3 Variables</h3>
+          <div class="var-grid" style="grid-template-columns:1fr; gap:10px;">
+            <div class="var-card fade-up fa-d2" style="display:flex;align-items:center;gap:14px;text-align:left">
+              <div class="num">①</div>
+              <div><h4 data-en="Calories" data-zh="热量">Calories</h4><p data-en="Determines whether you're building or cutting" data-zh="决定你是在增肌还是减脂">Determines whether you're building or cutting</p></div>
+            </div>
+            <div class="var-card fade-up fa-d3" style="display:flex;align-items:center;gap:14px;text-align:left">
+              <div class="num" style="color:var(--accent2)">②</div>
+              <div><h4 data-en="Protein" data-zh="蛋白质">Protein</h4><p data-en="Determines how much muscle you preserve" data-zh="决定你保住多少肌肉">Determines how much muscle you preserve</p></div>
+            </div>
+            <div class="var-card fade-up fa-d4" style="display:flex;align-items:center;gap:14px;text-align:left">
+              <div class="num" style="color:var(--gold)">③</div>
+              <div><h4 data-en="Carbohydrates" data-zh="碳水">Carbohydrates</h4><p data-en="Determines your training performance" data-zh="决定你的训练质量">Determines your training performance</p></div>
+            </div>
+          </div>
+          <p style="margin-top:12px;font-size:12px" data-en="Fats · Meal Frequency · Timing → Advanced optimization, not the deciding factors" data-zh="脂肪 · 餐次 · 时机 → 进阶优化，不是决定项">Fats · Meal Frequency · Timing → Advanced optimization, not the deciding factors</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── S3: Energy Balance ─────────────── -->
+  <div class="slide" id="s3">
+    <div class="slide-inner">
+      <div class="tag" data-en="FOUNDATION · 02" data-zh="基础 · 02">FOUNDATION · 02</div>
+      <h2 data-en="Energy Balance — The Foundation" data-zh="能量平衡 — 一切的起点">Energy Balance — The Foundation</h2>
+      <div class="two-col" style="margin-top:20px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card green-border">
+            <div class="tag" style="color:var(--accent2)">BULK</div>
+            <div class="stat-big" style="color:var(--accent2)">+5~15%</div>
+            <p data-en="above maintenance calories — maximize lean body mass gain" data-zh="高于维持热量 — 最大化瘦体重增长">above maintenance calories — maximize lean body mass gain</p>
+          </div>
+          <div class="card red-border">
+            <div class="tag" style="color:var(--accent3)">CUT</div>
+            <div class="stat-big" style="color:var(--accent3)">−15~25%</div>
+            <p data-en="below maintenance calories — minimize muscle loss" data-zh="低于维持热量 — 避免肌肉流失">below maintenance calories — minimize muscle loss</p>
+          </div>
+          <div class="card" style="font-size:13px">
+            <strong data-en="Monitor &amp; Adjust" data-zh="监控与调整">Monitor &amp; Adjust</strong>
+            <p style="margin-top:4px" data-en="Adjust ±100–200 kcal weekly based on body weight and training performance." data-zh="每周根据体重与训练表现动态调整 ±100–200 kcal，不要盲目死磕数字。">Adjust ±100–200 kcal weekly based on body weight and training performance.</p>
+          </div>
+        </div>
+        <div>
+          <h3 style="margin-bottom:10px" data-en="Energy Intake vs. Lean Body Mass Change" data-zh="能量摄入 vs. 瘦体重变化">Energy Intake vs. Lean Body Mass Change</h3>
+          <div class="chart-wrap"><canvas id="chart-energy"></canvas></div>
+          <!-- Interactive slider -->
+          <div class="slider-wrap" style="margin-top:16px">
+            <label style="font-size:13px;color:var(--text2)" data-en="Drag to explore caloric balance:" data-zh="拖动探索热量平衡：">Drag to explore caloric balance:</label>
+            <input type="range" id="energy-slider" min="-30" max="20" value="0" step="1" style="width:100%;margin-top:6px">
+            <div id="energy-result" style="margin-top:8px;font-size:14px;text-align:center;font-weight:700"></div>
+            <div class="slider-label"><span data-en="-30% (Aggressive Cut)" data-zh="-30% (激进减脂)">-30% (Aggressive Cut)</span><span data-en="+20% (Bulk)" data-zh="+20% (增肌期)">+20% (Bulk)</span></div>
+          </div>
+          <p class="source">Source: Aragon et al., ISSN Position Stand: Diets &amp; Body Composition (2017).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── S4: Protein Targets ─────────────── -->
+  <div class="slide" id="s4">
+    <div class="slide-inner">
+      <div class="tag" data-en="MACRO 1 · 03" data-zh="宏量营养 1 · 03">MACRO 1 · 03</div>
+      <h2 data-en="Protein Targets — How Much Is Enough?" data-zh="蛋白质目标 — 每日多少才够">Protein Targets — How Much Is Enough?</h2>
+      <div class="two-col" style="margin-top:18px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="card accent-border">
+            <div class="tag">HYPERTROPHY</div>
+            <div class="stat-big">1.6–2.2</div>
+            <div class="stat-unit">g / kg / <span data-en="day" data-zh="天">day</span></div>
+            <p style="margin-top:8px" data-en="Optimal range for maximizing MPS · Benefits plateau above 2.2 g/kg" data-zh="优化 MPS 的理想范围 · 超过 2.2 g/kg 增益有限">Optimal range for maximizing MPS · Benefits plateau above 2.2 g/kg</p>
+          </div>
+          <div class="card red-border">
+            <div class="tag" style="color:var(--accent3)">CUTTING</div>
+            <div class="stat-big" style="color:var(--accent3)">2.3–3.1</div>
+            <div class="stat-unit">g / kg / <span data-en="day" data-zh="天">day</span></div>
+            <p style="margin-top:8px" data-en="Higher ratio to preserve muscle mass · Increased satiety + enhanced TEF" data-zh="提高比例以保护肌肉 · 饱腹感 + 增强 TEF">Higher ratio to preserve muscle mass · Increased satiety + enhanced TEF</p>
+          </div>
+        </div>
+        <div>
+          <h3 style="margin-bottom:10px" data-en="Morton 2018 · Protein Intake vs. FFM Gain" data-zh="Morton 2018 · 蛋白质摄入与 FFM 增长">Morton 2018 · Protein Intake vs. FFM Gain</h3>
+          <div class="chart-wrap"><canvas id="chart-protein"></canvas></div>
+          <div style="margin-top:10px;padding:10px 14px;background:var(--card);border-radius:8px;font-size:13px">
+            <strong data-en="Breakpoint ≈ 1.62 g/kg/day" data-zh="断点 ≈ 1.62 g/kg/天">Breakpoint ≈ 1.62 g/kg/day</strong>
+            <span style="color:var(--text2)" data-en=" · 95% CI: 1.03–2.20 · meta-analysis n=1,863" data-zh=" · 95% CI: 1.03–2.20 · meta-analysis n=1,863"> · 95% CI: 1.03–2.20 · meta-analysis n=1,863</span>
+          </div>
+          <p class="source">Sources: Morton RW et al., Br J Sports Med (2018); Aragon et al., ISSN (2017).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── S5: Per-Meal Protein ─────────────── -->
+  <div class="slide" id="s5">
+    <div class="slide-inner">
+      <div class="tag" data-en="MACRO 1 CONT · 04" data-zh="宏量营养 1 续 · 04">MACRO 1 CONT · 04</div>
+      <h2 data-en="Per-Meal Protein Distribution — Spread It Out" data-zh="每餐蛋白质分配 — 分散才是王道">Per-Meal Protein Distribution — Spread It Out</h2>
+      <div class="two-col" style="margin-top:18px;align-items:start">
+        <div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+            <div class="card accent-border" style="text-align:center">
+              <div class="stat-big" style="font-size:36px">0.4–0.55</div>
+              <div class="stat-unit">g / kg / <span data-en="meal" data-zh="餐">meal</span></div>
+              <p style="margin-top:6px;font-size:12px" data-en="Maximize per-meal MPS response" data-zh="最大化单次 MPS 响应">Maximize per-meal MPS response</p>
+            </div>
+            <div class="card" style="text-align:center">
+              <div class="stat-big" style="font-size:36px">3–5h</div>
+              <div class="stat-unit" data-en="between meals" data-zh="餐间隔">between meals</div>
+              <p style="margin-top:6px;font-size:12px" data-en="Sustain continuous MPS" data-zh="保持持续 MPS 状态">Sustain continuous MPS</p>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:14px;background:rgba(227,179,65,.08);border-color:var(--gold)">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="font-size:28px font-weight:800;color:var(--gold);font-size:32px">~2.5g</div>
+              <div><strong data-en="Leucine Threshold" data-zh="亮氨酸阈值">Leucine Threshold</strong><br><p data-en="Critical dose to activate mTOR" data-zh="激活 mTOR 的关键剂量">Critical dose to activate mTOR</p></div>
+            </div>
+          </div>
+          <h3 style="margin-bottom:8px" data-en="High-Quality Sources (Leucine-Rich)" data-zh="优质蛋白来源（富含亮氨酸）">High-Quality Sources (Leucine-Rich)</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="card" style="padding:10px;text-align:center"><strong data-en="Whey" data-zh="乳清蛋白">Whey</strong><br><span style="color:var(--accent);font-size:13px">25g = 3g leu</span></div>
+            <div class="card" style="padding:10px;text-align:center"><strong data-en="Eggs" data-zh="鸡蛋">Eggs</strong><br><span style="color:var(--accent);font-size:13px">3 eggs ≈ 2.5g leu</span></div>
+            <div class="card" style="padding:10px;text-align:center"><strong data-en="Chicken Breast" data-zh="鸡胸肉">Chicken Breast</strong><br><span style="color:var(--accent);font-size:13px">170g ≈ 3g leu</span></div>
+            <div class="card" style="padding:10px;text-align:center"><strong data-en="Beef" data-zh="牛肉">Beef</strong><br><span style="color:var(--accent);font-size:13px">170g ≈ 3g leu</span></div>
+          </div>
+        </div>
+        <div>
+          <h3 style="margin-bottom:10px" data-en="Single Protein Dose vs. MPS Response" data-zh="单次蛋白质剂量 vs. MPS 响应">Single Protein Dose vs. MPS Response</h3>
+          <div class="chart-wrap"><canvas id="chart-mps"></canvas></div>
+          <p class="source" style="margin-top:8px">Sources: Schoenfeld &amp; Aragon, J Int Soc Sports Nutr (2018); Witard et al.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── S6: Carbohydrates ─────────────── -->
+  <div class="slide" id="s6">
+    <div class="slide-inner">
+      <div class="tag" data-en="MACRO 2 · 05" data-zh="宏量营养 2 · 05">MACRO 2 · 05</div>
+      <h2 data-en="Carbohydrates — Training Fuel" data-zh="碳水化合物 — 训练燃料">Carbohydrates — Training Fuel</h2>
+      <div class="two-col" style="margin-top:18px;align-items:start">
+        <div>
+          <h3 style="margin-bottom:12px" data-en="Peri-Workout Carbohydrate Strategy" data-zh="围训练期碳水策略">Peri-Workout Carbohydrate Strategy</h3>
+          <div class="step-list">
+            <div class="step-item">
+              <div class="step-num">01</div>
+              <div>
+                <strong data-en="1–2h before training" data-zh="训练前 1–2h">1–2h before training</strong>
+                <p data-en="Complex carbs + protein to top up glycogen" data-zh="复合碳水 + 蛋白质，拉满糖原">Complex carbs + protein to top up glycogen</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num green">02</div>
+              <div>
+                <strong data-en="0–2h post-workout" data-zh="训练后 0–2h">0–2h post-workout</strong>
+                <p data-en="Fast carbs + protein to accelerate recovery" data-zh="快碳 + 蛋白质，加速恢复">Fast carbs + protein to accelerate recovery</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num red">03</div>
+              <div>
+                <strong data-en="4–6h post-workout" data-zh="训练后 4–6h">4–6h post-workout</strong>
+                <p>1.0–1.2 g/kg/h <span data-en="until glycogen is fully replenished" data-zh="直到糖原满仓">until glycogen is fully replenished</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 style="margin-bottom:10px" data-en="Post-Workout Glycogen Resynthesis Rate" data-zh="训练后糖原恢复率">Post-Workout Glycogen Resynthesis Rate</h3>
+          <div class="chart-wrap"><canvas id="chart-glycogen"></canvas></div>
+          <div style="margin-top:10px;padding:10px 14px;background:var(--card);border-radius:8px;font-size:13px">
+            <span data-en="Immediate carb intake vs. 2h delay: glycogen resynthesis rate is ~2× faster (Ivy 1988)" data-zh="立即补碳 vs. 延迟 2h：糖原补充速率约快 2 倍 (Ivy 1988)">Immediate carb intake vs. 2h delay: glycogen resynthesis rate is ~2× faster (Ivy 1988)</span>
+          </div>
+          <p class="source">Sources: Ivy et al., J Appl Physiol (1988); Burke et al., J Appl Physiol (2017).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── S7: Dietary Fat ─────────────── -->
+  <div class="slide" id="s7">
+    <div class="slide-inner">
+      <div class="tag" data-en="MACRO 3 · 06" data-zh="宏量营养 3 · 06">MACRO 3 · 06</div>
+      <h2 data-en="Dietary Fat — Hormonal Support" data-zh="脂肪 — 荷尔蒙支持">Dietary Fat — Hormonal Support</h2>
+      <div class="two-col" style="margin-top:18px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="card">
+            <div class="stat-big">20–30%</div>
+            <div class="stat-unit" data-en="of total calories" data-zh="占总热量">of total calories</div>
+            <p style="margin-top:8px" data-en="Optimal range — balances satiety and hormonal function" data-zh="最佳区间；同时兼顾饱腹与激素">Optimal range — balances satiety and hormonal function</p>
+          </div>
+          <div class="card red-border">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:24px">⚠️</span>
+              <div>
+                <strong data-en="Min 0.5 g/kg/day" data-zh="最低 0.5 g/kg">Min 0.5 g/kg/day</strong>
+                <p data-en="Absolute floor — risks increase below this level" data-zh="每日绝对下限，低于此线风险升高">Absolute floor — risks increase below this level</p>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <strong data-en="Diversify Your Sources" data-zh="来源多样化">Diversify Your Sources</strong>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+              <span class="badge badge-blue" data-en="Olive Oil" data-zh="橄榄油">Olive Oil</span>
+              <span class="badge badge-green" data-en="Nuts" data-zh="坚果">Nuts</span>
+              <span class="badge badge-orange" data-en="Fatty Fish" data-zh="深海鱼">Fatty Fish</span>
+              <span class="badge badge-blue" data-en="Egg Yolks" data-zh="蛋黄">Egg Yolks</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 style="margin-bottom:10px" data-en="Dietary Fat % vs. Testosterone Levels" data-zh="脂肪摄入 vs. 睾酮水平">Dietary Fat % vs. Testosterone Levels</h3>
+          <div class="chart-wrap"><canvas id="chart-fat"></canvas></div>
+          <div style="margin-top:10px;padding:10px 14px;background:rgba(248,81,73,.08);border:1px solid var(--red);border-radius:8px;font-size:13px">
+            <span data-en="Fat intake &lt;20% of total calories → testosterone drops ~10–15% on average" data-zh="脂肪＜20% 总热量时，睾酮平均下降 10–15%">Fat intake &lt;20% of total calories → testosterone drops ~10–15% on average</span>
+          </div>
+          <p class="source">Source: Whittaker J &amp; Wu K, J Steroid Biochem Mol Biol (2021).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── S8: Meal Frequency ─────────────── -->
+  <div class="slide" id="s8">
+    <div class="slide-inner">
+      <div class="tag" data-en="TIMING · 07" data-zh="时机 · 07">TIMING · 07</div>
+      <h2 data-en="Meal Frequency &amp; Timing" data-zh="进餐频率与时机">Meal Frequency &amp; Timing</h2>
+      <div class="two-col" style="margin-top:18px;align-items:start">
+        <div>
+          <h3 style="margin-bottom:12px" data-en="Meal Strategy Quick Reference" data-zh="进餐策略速查">Meal Strategy Quick Reference</h3>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <strong data-en="Meals per Day" data-zh="每日餐数">Meals per Day</strong>
+                <span class="badge badge-blue">3–6</span>
+              </div>
+              <p style="margin-top:4px" data-en="Even protein distribution is the priority" data-zh="均匀分配蛋白质最关键">Even protein distribution is the priority</p>
+            </div>
+            <div class="card green-border">
+              <strong data-en="Pre-Workout Meal" data-zh="练前餐">Pre-Workout Meal</strong>
+              <span style="float:right;color:var(--text2);font-size:13px" data-en="1–2h before training" data-zh="训练前 1–2h">1–2h before training</span>
+              <p style="margin-top:4px" data-en="Protein + complex carbs" data-zh="蛋白质 + 复合碳水">Protein + complex carbs</p>
+            </div>
+            <div class="card accent-border">
+              <strong data-en="Post-Workout Meal" data-zh="练后餐">Post-Workout Meal</strong>
+              <span style="float:right;color:var(--text2);font-size:13px" data-en="Within 2h post-workout" data-zh="训练后 ≤ 2h">Within 2h post-workout</span>
+              <p style="margin-top:4px" data-en="20–40g high-quality protein" data-zh="20–40g 高质量蛋白">20–40g high-quality protein</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 style="margin-bottom:10px" data-en="Meals per Day vs. MPS Efficiency" data-zh="每日餐数 vs MPS 效率">Meals per Day vs. MPS Efficiency</h3>
+          <div class="chart-wrap"><canvas id="chart-meals"></canvas></div>
+          <div style="margin-top:10px;padding:10px 14px;background:var(--card);border-radius:8px;font-size:13px">
+            <span data-en="~4 meals/day — MPS efficiency peaks (Areta et al. 2013 · same daily total protein)" data-zh="每日 4 餐左右 — MPS 效率达到峰值 (Areta et al. 2013 · 同等日总蛋白)">~4 meals/day — MPS efficiency peaks (Areta et al. 2013 · same daily total protein)</span>
+          </div>
+          <p class="source">Source: Areta JL et al., J Physiol (2013); Schoenfeld &amp; Aragon (2018).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── S9: Diet Breaks ─────────────── -->
+  <div class="slide" id="s9">
+    <div class="slide-inner">
+      <div class="tag" data-en="LONG-TERM · 08" data-zh="长期策略 · 08">LONG-TERM · 08</div>
+      <h2 data-en="Diet Breaks &amp; Refeeds" data-zh="饮食休息与补碳">Diet Breaks &amp; Refeeds</h2>
+      <div class="two-col" style="margin-top:18px;align-items:stretch">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="card" style="flex:1;background:rgba(88,166,255,.06);border-color:var(--accent)">
+            <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:6px">MATADOR Strategy</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:10px" data-en="Minimizing Adaptive Thermogenesis And Deactivating Obesity Rebound" data-zh="最小化适应性产热与抑制肥胖反弹">Minimizing Adaptive Thermogenesis And Deactivating Obesity Rebound</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span class="badge badge-blue" data-en="Every 8–10 weeks" data-zh="每 8–10 周">Every 8–10 weeks</span>
+                <p style="font-size:13px" data-en="1–2 week diet break at maintenance calories" data-zh="安排 1–2 周饮食休息（吃到维持热量）">1–2 week diet break at maintenance calories</p>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span class="badge badge-green" data-en="RMR Protection" data-zh="代谢率保护">RMR Protection</span>
+                <p style="font-size:13px" data-en="Metabolic decline is only half of continuous dieters" data-zh="RMR 下降只有连续节食组的一半">Metabolic decline is only half of continuous dieters</p>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span class="badge badge-orange" data-en="Performance" data-zh="训练表现">Performance</span>
+                <p style="font-size:13px" data-en="Improves training strength and mood" data-zh="改善训练表现，避免减脂期崩盘">Improves training strength and mood</p>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="background:rgba(63,185,80,.06);border-color:var(--accent2)">
+            <div style="font-size:20px;font-weight:800;color:var(--accent2)">↑↑ <span data-en="Long-Term Adherence" data-zh="长期依从性">Long-Term Adherence</span></div>
+            <p style="margin-top:6px" data-en="Core value: making fat loss sustainable" data-zh="最核心价值：让减脂能持续下去">Core value: making fat loss sustainable</p>
+          </div>
+        </div>
+        <div>
+          <h3 style="margin-bottom:10px" data-en="Continuous vs. Intermittent Dieting · Fat Loss" data-zh="连续节食 vs 间歇节食 · 脂肪流失">Continuous vs. Intermittent Dieting · Fat Loss</h3>
+          <div class="chart-wrap"><canvas id="chart-matador"></canvas></div>
+          <div style="margin-top:10px;padding:10px 14px;background:rgba(63,185,80,.08);border:1px solid var(--accent2);border-radius:8px;font-size:13px">
+            <strong data-en="Intermittent group lost 50% MORE fat" data-zh="间歇组脂肪多掉 50%">Intermittent group lost 50% MORE fat</strong>
+            <span style="color:var(--text2)" data-en=" · metabolic decline was half · Byrne et al. 2018, n=51" data-zh=" · 代谢下降只有一半 · Byrne et al. 2018, n=51"> · metabolic decline was half · Byrne et al. 2018, n=51</span>
+          </div>
+          <p class="source">Source: Byrne NM et al., Int J Obes (2018), MATADOR Study.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── S10: Templates ─────────────── -->
+  <div class="slide" id="s10">
+    <div class="slide-inner">
+      <div class="tag" data-en="TEMPLATE · 09" data-zh="实操模板 · 09">TEMPLATE · 09</div>
+      <h2 data-en="Muscle Gain vs. Fat Loss · Practical Templates" data-zh="增肌 vs. 减脂 · 实操模板">Muscle Gain vs. Fat Loss · Practical Templates</h2>
+      <div class="two-col" style="margin-top:20px;align-items:start;gap:20px">
+        <div class="card green-border">
+          <div class="tag" style="color:var(--accent2)">BULK — <span data-en="Hypertrophy Phase" data-zh="增肌期">Hypertrophy Phase</span></div>
+          <table class="tmpl-table" style="margin-top:12px">
+            <tr><td data-en="Caloric Surplus" data-zh="热量盈余">Caloric Surplus</td><td><span class="badge badge-green">+5 to 15%</span></td></tr>
+            <tr><td data-en="Protein" data-zh="蛋白质">Protein</td><td><span class="highlight2">1.6–2.2 g/kg</span></td></tr>
+            <tr><td data-en="Carbs (Primary Energy)" data-zh="碳水（主动力）">Carbs (Primary Energy)</td><td><span class="badge badge-orange" data-en="High" data-zh="高">High</span></td></tr>
+            <tr><td data-en="Fat (Hormone Support)" data-zh="脂肪（维持激素）">Fat (Hormone Support)</td><td>25–30%</td></tr>
+          </table>
+          <p style="margin-top:10px;font-size:12px;color:var(--accent2)" data-en="✓ Adequate carbs ensure training volume capacity" data-zh="✓ 充足碳水是训练容量的保证">✓ Adequate carbs ensure training volume capacity</p>
+        </div>
+        <div class="card red-border">
+          <div class="tag" style="color:var(--accent3)">CUT — <span data-en="Cutting Phase" data-zh="减脂期">Cutting Phase</span></div>
+          <table class="tmpl-table" style="margin-top:12px">
+            <tr><td data-en="Caloric Deficit" data-zh="热量亏空">Caloric Deficit</td><td><span class="badge" style="background:rgba(248,81,73,.15);color:var(--accent3)">−15 to 25%</span></td></tr>
+            <tr><td data-en="Protein (Increased)" data-zh="蛋白质（提高）">Protein (Increased)</td><td><span class="highlight3">2.3–3.1 g/kg</span></td></tr>
+            <tr><td data-en="Carbs (Primary Variable)" data-zh="碳水（调整项）">Carbs (Primary Variable)</td><td><span class="badge badge-orange" data-en="Moderate" data-zh="适中">Moderate</span></td></tr>
+            <tr><td data-en="Fat (Min 0.5 g/kg)" data-zh="脂肪（不低于 0.5 g/kg）">Fat (Min 0.5 g/kg)</td><td>20–25%</td></tr>
+          </table>
+          <p style="margin-top:10px;font-size:12px;color:var(--accent3)" data-en="✓ Elevating protein is key to preserving muscle" data-zh="✓ 蛋白质拉高是保肌肉的核心">✓ Elevating protein is key to preserving muscle</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px;display:flex;gap:24px;justify-content:center;flex-wrap:wrap">
+        <span data-en="✦ Protein stays relatively constant" data-zh="✦ 蛋白质相对稳定">✦ Protein stays relatively constant</span>
+        <span data-en="✦ Carbs are the primary adjustment variable" data-zh="✦ 碳水是主要调整变量">✦ Carbs are the primary adjustment variable</span>
+        <span data-en="✦ Fat stays within a healthy range" data-zh="✦ 脂肪维持合理范围">✦ Fat stays within a healthy range</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── S11: Spot Reduction Intro ─────────────── -->
+  <div class="slide" id="s11">
+    <div style="text-align:center;max-width:700px">
+      <div class="tag">PART II</div>
+      <h1 style="font-size:clamp(24px,3.5vw,48px);margin-top:12px" data-en="The Truth About Spot Reduction" data-zh="局部减脂的真相">The Truth About Spot Reduction</h1>
+      <div style="font-size:clamp(14px,1.8vw,20px);color:var(--text2);font-style:italic;margin:20px 0;padding:20px;background:var(--card);border-radius:12px;border-left:4px solid var(--accent)">
+        <span data-en='"There\'s no such thing as spot reduction" is an oversimplification. The real science is more nuanced.' data-zh='"没有局部减脂" 是一种过度简化。真实情况更有趣：'>"There's no such thing as spot reduction" is an oversimplification. The real science is more nuanced.</span>
+      </div>
+      <div style="font-size:clamp(14px,1.6vw,18px);color:var(--accent2);font-weight:600;padding:16px;background:rgba(63,185,80,.08);border:1px solid var(--accent2);border-radius:10px">
+        <span data-en="Some areas are very hard to lose fat from — but not impossible." data-zh="某些部位很难减，不是"减不了"。">Some areas are very hard to lose fat from — but not impossible.</span><br>
+        <span data-en="The key is LPL activity differences." data-zh="关键在 LPL 活性差异。">The key is LPL activity differences.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── S12: What is LPL ─────────────── -->
+  <div class="slide" id="s12">
+    <div class="slide-inner">
+      <div class="tag" data-en="PART II · 11" data-zh="第二部分 · 11">PART II · 11</div>
+      <h2 data-en="What Is LPL (Lipoprotein Lipase)?" data-zh="什么是 LPL（脂蛋白脂肪酶）？">What Is LPL (Lipoprotein Lipase)?</h2>
+      <div class="two-col" style="margin-top:18px;align-items:stretch">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="card accent-border">
+            <div style="font-size:12px;color:var(--accent);font-weight:700;margin-bottom:6px" data-en="ONE-LINE DEFINITION" data-zh="一句话定义">ONE-LINE DEFINITION</div>
+            <p data-en="LPL = The key enzyme on the surface of fat cells" data-zh="LPL = 脂肪细胞表面的关键酶">LPL = The key enzyme on the surface of fat cells</p>
+          </div>
+          <div class="card">
+            <div style="font-size:12px;color:var(--text2);font-weight:700;margin-bottom:8px" data-en="CORE FUNCTION" data-zh="核心功能">CORE FUNCTION</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;gap:8px;align-items:flex-start"><span style="color:var(--accent)">→</span><p data-en="Breaks down blood triglycerides into fatty acids" data-zh="把血液中的甘油三酯分解成脂肪酸">Breaks down blood triglycerides into fatty acids</p></div>
+              <div style="display:flex;gap:8px;align-items:flex-start"><span style="color:var(--accent)">→</span><p data-en="Allows fat cells to absorb and store these fatty acids" data-zh="让脂肪细胞"吸收并储存"这些脂肪酸">Allows fat cells to absorb and store these fatty acids</p></div>
+            </div>
+          </div>
+          <div class="card" style="background:rgba(227,179,65,.08);border-color:var(--gold);text-align:center">
+            <div style="font-size:22px;margin-bottom:6px">🔑</div>
+            <strong data-en='LPL = The "Gatekeeper" of fat storage' data-zh='LPL = 脂肪入口的"开门人"'>LPL = The "Gatekeeper" of fat storage</strong>
+            <p style="margin-top:6px" data-en="The more active it is, the easier fat accumulates in that area" data-zh="开得越勤，这个部位越容易囤积脂肪">The more active it is, the easier fat accumulates in that area</p>
+          </div>
+        </div>
+        <div>
+          <h3 style="margin-bottom:12px" data-en="Visual: LPL Differences Across Body Regions" data-zh="可视化：两类部位的 LPL 差异">Visual: LPL Differences Across Body Regions</h3>
+          <div class="lpl-grid">
+            <div class="lpl-card lpl-high">
+              <div class="lpl-icon">🏋️</div>
+              <h4 style="color:var(--red)" data-en="High LPL Activity" data-zh="LPL 活性高">High LPL Activity</h4>
+              <p style="font-size:12px;margin-top:6px" data-en="Fat Accumulation Zone — fatty acids continuously enter cells, cells expand" data-zh="囤脂王 — 脂肪酸源源不断进入细胞，细胞越撑越大">Fat Accumulation Zone — fatty acids continuously enter cells, cells expand</p>
+            </div>
+            <div class="lpl-card lpl-low">
+              <div class="lpl-icon">✨</div>
+              <h4 style="color:var(--accent2)" data-en="Low LPL Activity" data-zh="LPL 活性低">Low LPL Activity</h4>
+              <p style="font-size:12px;margin-top:6px" data-en="Easy-Loss Zone — gate opens less; fat accumulates slowly and is lost faster" data-zh="好减区 — 门开得少；囤积慢、减掉快">Easy-Loss Zone — gate opens less; fat accumulates slowly and is lost faster</p>
+            </div>
+          </div>
+          <div class="chart-wrap" style="margin-top:16px"><canvas id="chart-lpl"></canvas></div>
+          <p class="source">Source: Mead JR et al., J Mol Med (2002).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── S13: Regional Fat Loss ─────────────── -->
+  <div class="slide" id="s13">
+    <div class="slide-inner">
+      <div class="tag" data-en="PART II · 12" data-zh="第二部分 · 12">PART II · 12</div>
+      <h2 data-en="Why Are the Abs &amp; Thighs Hardest to Lose?" data-zh="为什么腹部/大腿最难减？">Why Are the Abs &amp; Thighs Hardest to Lose?</h2>
+      <div class="two-col" style="margin-top:18px;align-items:start">
+        <div>
+          <div class="card" style="margin-bottom:14px">
+            <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px" data-en="THE MORE PRECISE SCIENTIFIC CONCLUSION" data-zh="更严谨的科学结论">THE MORE PRECISE SCIENTIFIC CONCLUSION</div>
+            <p data-en='Spot reduction is "very difficult, but not entirely impossible"' data-zh='局部减脂 "很难，但并非不存在"'>Spot reduction is "very difficult, but not entirely impossible"</p>
+            <p style="margin-top:8px" data-en="Key mechanism: Fat cells in different body regions have varying LPL activity. Higher LPL activity → easier fat accumulation, harder fat loss." data-zh="关键机制：不同部位的脂肪细胞，LPL（脂蛋白脂肪酶）活性有差异。LPL 活性越高 → 越容易囤积脂肪、越难减。">Key mechanism: Fat cells in different body regions have varying LPL activity. Higher LPL activity → easier fat accumulation, harder fat loss.</p>
+          </div>
+          <div class="lpl-bar-wrap">
+            <h3 style="margin-bottom:10px" data-en="Common Body Region LPL Comparison" data-zh="常见部位对照">Common Body Region LPL Comparison</h3>
+            <div class="lpl-bar-row">
+              <div class="lpl-bar-label" data-en="Arms / Face" data-zh="手臂 / 脸部">Arms / Face</div>
+              <div class="lpl-bar-track"><div class="lpl-bar-fill" style="width:25%;background:var(--accent2)"><span data-en="Low" data-zh="低">Low</span></div></div>
+            </div>
+            <div class="lpl-bar-row">
+              <div class="lpl-bar-label" data-en="Chest (male)" data-zh="胸部（男）">Chest (male)</div>
+              <div class="lpl-bar-track"><div class="lpl-bar-fill" style="width:50%;background:var(--gold)"><span data-en="Med" data-zh="中">Med</span></div></div>
+            </div>
+            <div class="lpl-bar-row">
+              <div class="lpl-bar-label" data-en="Abdomen (male)" data-zh="腹部（男）">Abdomen (male)</div>
+              <div class="lpl-bar-track"><div class="lpl-bar-fill" style="width:78%;background:var(--accent3)"><span data-en="High" data-zh="高">High</span></div></div>
+            </div>
+            <div class="lpl-bar-row">
+              <div class="lpl-bar-label" data-en="Thighs/Glutes (female)" data-zh="臀/腿（女）">Thighs/Glutes (female)</div>
+              <div class="lpl-bar-track"><div class="lpl-bar-fill" style="width:95%;background:var(--red)"><span data-en="V.High" data-zh="极高">V.High</span></div></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 style="margin-bottom:10px" data-en="LPL Activity vs. Fat Loss Difficulty" data-zh="LPL 活性与减脂难度对应关系">LPL Activity vs. Fat Loss Difficulty</h3>
+          <div class="chart-wrap"><canvas id="chart-regional"></canvas></div>
+          <p class="source">Sources: Ukkola O et al., Quebec Family Study (2001); Arner P, Br Med Bull (1997).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── S14: Summary ─────────────── -->
+  <div class="slide" id="s14">
+    <div class="slide-inner">
+      <div class="tag" data-en="SUMMARY · 13" data-zh="总结 · 13">SUMMARY · 13</div>
+      <h2 data-en="Summary + Strategies for Stubborn Fat" data-zh="总结 + 顽固脂肪实战策略">Summary + Strategies for Stubborn Fat</h2>
+      <div style="margin-top:14px;padding:14px 20px;background:rgba(88,166,255,.08);border:1px solid var(--accent);border-radius:10px;text-align:center;font-size:16px;font-weight:600">
+        <span data-en='"You can make a region more prone to fat loss, but you cannot spot reduce"' data-zh='"你可以让某部位更容易掉脂，但无法只瘦那里"'>"You can make a region more prone to fat loss, but you cannot spot reduce"</span>
+      </div>
+      <div class="two-col" style="margin-top:16px;align-items:start">
+        <div>
+          <div class="card red-border" style="margin-bottom:14px">
+            <strong data-en="Why belly fat is triple-protected:" data-zh="腹部为何是&ldquo;战略储备粮&rdquo;——三重机制叠加保护：">Why belly fat is triple-protected:</strong>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+              <span class="badge" style="background:rgba(248,81,73,.15);color:var(--red)" data-en="α2 receptors ↑" data-zh="α2 受体多">α2 receptors ↑</span>
+              <span class="badge" style="background:rgba(248,81,73,.15);color:var(--red)" data-en="LPL activity ↑" data-zh="LPL 活性高">LPL activity ↑</span>
+              <span class="badge" style="background:rgba(248,81,73,.15);color:var(--red)" data-en="Insulin inhibition ↑" data-zh="胰岛素抑制强">Insulin inhibition ↑</span>
+            </div>
+          </div>
+          <h3 style="margin-bottom:12px" data-en="Attacking Stubborn Fat — Combination Strategy" data-zh="针对顽固腹部脂肪 — 组合拳策略">Attacking Stubborn Fat — Combination Strategy</h3>
+          <div class="step-list">
+            <div class="step-item"><div class="step-num">01</div><div><strong data-en="Prioritize Strength Training" data-zh="力量训练优先">Prioritize Strength Training</strong><p data-en="Increase local blood flow to mobilize fat" data-zh="提高局部血流，先动员脂肪">Increase local blood flow to mobilize fat</p></div></div>
+            <div class="step-item"><div class="step-num green">02</div><div><strong data-en="Do Cardio After Lifting" data-zh="有氧接在训练后">Do Cardio After Lifting</strong><p data-en="Burn the already-mobilized fatty acids" data-zh="消耗已释放的脂肪酸">Burn the already-mobilized fatty acids</p></div></div>
+            <div class="step-item"><div class="step-num red">03</div><div><strong data-en="Manage Carbs / Insulin" data-zh="控制碳水/胰岛素">Manage Carbs / Insulin</strong><p data-en="Reduce LPL fat-storage signaling" data-zh="降低 LPL 储脂信号">Reduce LPL fat-storage signaling</p></div></div>
+            <div class="step-item"><div class="step-num" style="background:var(--gold)">04</div><div><strong data-en="Avoid Overeating" data-zh="避免暴食">Avoid Overeating</strong><p data-en="Prevent LPL from aggressively storing fat" data-zh="防止 LPL 疯狂囤积脂肪">Prevent LPL from aggressively storing fat</p></div></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="font-size:12px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px" data-en="STRATEGY PRIORITY HIERARCHY" data-zh="策略优先级架构">STRATEGY PRIORITY HIERARCHY</div>
+
+          <!-- Level 1: Foundation -->
+          <div style="background:rgba(63,185,80,.1);border:1px solid var(--accent2);border-radius:10px;padding:14px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="background:var(--accent2);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px" data-en="FOUNDATION — Must Do" data-zh="基础 — 必须做到">FOUNDATION — Must Do</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="color:var(--accent2);font-weight:700">①</span><span data-en="Caloric deficit (−15 to 25%)" data-zh="热量亏空（−15 ~ 25%）">Caloric deficit (−15 to 25%)</span></div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="color:var(--accent2);font-weight:700">②</span><span data-en="High protein (2.3–3.1 g/kg/day)" data-zh="高蛋白（2.3–3.1 g/kg/天）">High protein (2.3–3.1 g/kg/day)</span></div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="color:var(--accent2);font-weight:700">③</span><span data-en="Consistent strength training" data-zh="规律力量训练">Consistent strength training</span></div>
+            </div>
+          </div>
+
+          <!-- Level 2: Optimization -->
+          <div style="background:rgba(88,166,255,.08);border:1px solid var(--accent);border-radius:10px;padding:14px">
+            <div style="margin-bottom:8px">
+              <span style="background:var(--accent);color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px" data-en="OPTIMIZATION — Layer 2" data-zh="优化 — 第二层">OPTIMIZATION — Layer 2</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:13px;color:var(--text2)" data-en="Nutrient timing · Meal distribution (3–5×/day)" data-zh="营养时机 · 每日 3–5 餐均衡分配">Nutrient timing · Meal distribution (3–5×/day)</div>
+              <div style="font-size:13px;color:var(--text2)" data-en="Diet breaks every 8–10 weeks (MATADOR)" data-zh="每 8–10 周安排饮食休息（MATADOR）">Diet breaks every 8–10 weeks (MATADOR)</div>
+            </div>
+          </div>
+
+          <!-- Level 3: Fine-tuning -->
+          <div style="background:rgba(227,179,65,.08);border:1px solid var(--gold);border-radius:10px;padding:14px">
+            <div style="margin-bottom:8px">
+              <span style="background:var(--gold);color:#000;font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px" data-en="FINE-TUNING — Local Tactics" data-zh="微调 — 局部策略">FINE-TUNING — Local Tactics</span>
+            </div>
+            <div style="font-size:13px;color:var(--text2)" data-en="Strength → Cardio sequencing · Carb/insulin management · Avoid LPL spikes" data-zh="力量训练 → 有氧衔接 · 控制碳水/胰岛素 · 避免暴食触发 LPL 囤积">Strength → Cardio sequencing · Carb/insulin management · Avoid LPL spikes</div>
+          </div>
+
+          <div style="padding:10px 14px;background:var(--card);border-radius:8px;font-size:12px;color:var(--text2);text-align:center;border:1px solid var(--border)">
+            <span data-en="⚠ Local tactics only amplify results when the foundation is already solid." data-zh="⚠ 局部策略只有在基础扎实时才能放大效果。">⚠ Local tactics only amplify results when the foundation is already solid.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── S15: Q&A + References ─────────────── -->
+  <div class="slide" id="s15">
+    <div class="slide-inner">
+      <div style="text-align:center;margin-bottom:24px">
+        <div class="tag">Q &amp; A</div>
+        <h1 style="font-size:clamp(24px,3vw,40px)" data-en="Questions, Comments, Challenges" data-zh="欢迎挑战结论、分享你的训练案例">Questions, Comments, Challenges</h1>
+      </div>
+      <div class="two-col" style="align-items:center">
+        <div>
+          <h3 style="margin-bottom:12px" data-en="Key References" data-zh="关键文献">Key References</h3>
+          <ul class="ref-list">
+            <li><a href="https://bjsm.bmj.com/content/52/6/376" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">1. Morton RW et al. (2018). Protein supplementation &amp; RET-induced FFM gains. <em>Br J Sports Med</em> 52:376–384. ↗</a></li>
+            <li><a href="https://doi.org/10.1186/s12970-018-0215-1" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">2. Schoenfeld BJ &amp; Aragon AA (2018). How much protein per meal for muscle-building? <em>J Int Soc Sports Nutr</em> 15:10. ↗</a></li>
+            <li><a href="https://doi.org/10.1186/s12970-017-0174-y" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">3. Aragon AA et al. (2017). ISSN Position Stand: Diets &amp; Body Composition. <em>J Int Soc Sports Nutr</em> 14:16. ↗</a></li>
+            <li><a href="https://doi.org/10.1186/s12970-017-0189-4" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">4. Kerksick CM et al. (2017). ISSN Position Stand: Nutrient Timing. <em>J Int Soc Sports Nutr</em> 14:33. ↗</a></li>
+            <li><a href="https://doi.org/10.1016/j.jsbmb.2021.105878" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">5. Whittaker J &amp; Wu K (2021). Low-fat diets and testosterone. <em>J Steroid Biochem Mol Biol</em> 210:105878. ↗</a></li>
+            <li><a href="https://doi.org/10.1038/ijo.2017.206" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">6. Byrne NM et al. (2018). MATADOR Study. <em>Int J Obes</em> 42:129–138. ↗</a></li>
+            <li><a href="https://doi.org/10.1152/japplphysiol.00860.2016" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">7. Burke LM et al. (2017). Postexercise muscle glycogen resynthesis. <em>J Appl Physiol</em> 122:1055–1067. ↗</a></li>
+            <li><a href="https://doi.org/10.1038/sj.ijo.0801693" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">8. Ukkola O et al. (2001). LPL, adrenergic receptor interactions &amp; abdominal fat. <em>Int J Obes</em> 25:1332–1339. ↗</a></li>
+          </ul>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card" style="text-align:center;padding:28px">
+            <div style="font-size:48px;margin-bottom:12px">💬</div>
+            <h3 data-en="Open Discussion" data-zh="开放讨论">Open Discussion</h3>
+            <p style="margin-top:8px" data-en="Challenge the conclusions, share your training experience, ask anything!" data-zh="欢迎挑战结论、分享你的训练案例、提出任何问题！">Challenge the conclusions, share your training experience, ask anything!</p>
+          </div>
+          <div class="card" style="text-align:center">
+            <div style="font-size:13px;color:var(--text2)">Performance Coaching</div>
+            <div style="font-size:14px;font-weight:700;margin:4px 0">Nutrition for Hypertrophy &amp; Cutting</div>
+            <div style="font-size:12px;color:var(--text2)">By Kyle · 2026</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /slideshow -->
+
+<!-- Navigation -->
+<div id="nav">
+  <button id="btn-prev" onclick="changeSlide(-1)" disabled>← <span data-en="Prev" data-zh="上一页">Prev</span></button>
+  <div class="dot-nav" id="dots"></div>
+  <button id="btn-next" onclick="changeSlide(1)"><span data-en="Next" data-zh="下一页">Next</span> →</button>
+</div>
+<div id="key-hint" data-en="← → keys or click dots to navigate" data-zh="← → 键或点击圆点导航">← → keys or click dots to navigate</div>
+
+<script>
+/* ─── State ─── */
+let currentSlide = 0;
+let currentLang = 'en';
+const totalSlides = 15;
+let charts = {};
+
+/* ─── Slide Navigation ─── */
+function changeSlide(dir) {
+  const slides = document.querySelectorAll('.slide');
+  slides[currentSlide].classList.remove('active');
+  slides[currentSlide].classList.add('prev');
+  setTimeout(() => slides[currentSlide].classList.remove('prev'), 400);
+  currentSlide = Math.max(0, Math.min(totalSlides - 1, currentSlide + dir));
+  slides[currentSlide].classList.add('active');
+  updateNav();
+  initChartsForSlide(currentSlide);
+}
+
+function goToSlide(n) {
+  if (n === currentSlide) return;
+  const slides = document.querySelectorAll('.slide');
+  slides[currentSlide].classList.remove('active');
+  currentSlide = n;
+  slides[currentSlide].classList.add('active');
+  updateNav();
+  initChartsForSlide(currentSlide);
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = currentSlide === 0;
+  document.getElementById('btn-next').disabled = currentSlide === totalSlides - 1;
+  document.getElementById('slide-counter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+  document.querySelectorAll('#sidenav .sidenav-item').forEach((el, i) => el.classList.toggle('active', i === currentSlide));
+}
+
+/* ─── Build Dots ─── */
+const dotsEl = document.getElementById('dots');
+for (let i = 0; i < totalSlides; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.onclick = () => goToSlide(i);
+  dotsEl.appendChild(d);
+}
+
+/* ─── Keyboard ─── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+});
+
+/* ─── Language Toggle ─── */
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-zh').classList.toggle('active', lang === 'zh');
+  document.querySelectorAll('[data-en]').forEach(el => {
+    el.innerHTML = lang === 'zh' ? el.dataset.zh : el.dataset.en;
+  });
+}
+
+/* ─── Chart Defaults ─── */
+Chart.defaults.color = '#8b949e';
+Chart.defaults.borderColor = '#30363d';
+Chart.defaults.font.family = "-apple-system, 'Segoe UI', system-ui, sans-serif";
+
+function destroyChart(id) {
+  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+}
+
+/* ─── Chart Initializers ─── */
+function initChartsForSlide(n) {
+  if (n === 2) initEnergyChart();
+  if (n === 3) initProteinChart();
+  if (n === 4) initMpsChart();
+  if (n === 5) initGlycogenChart();
+  if (n === 6) initFatChart();
+  if (n === 7) initMealsChart();
+  if (n === 8) initMatadorChart();
+  if (n === 11) initLplChart();
+  if (n === 12) initRegionalChart();
+}
+
+/* S3: Energy Balance */
+function initEnergyChart() {
+  if (charts['energy']) return;
+  const ctx = document.getElementById('chart-energy').getContext('2d');
+  charts['energy'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['-25%', '-20%', '-15%', '-10%', '-5%', '0%\n(Maint.)', '+5%', '+10%', '+15%', '+20%'],
+      datasets: [{
+        label: 'Lean Body Mass Change',
+        data: [-1.2, -0.9, -0.5, -0.2, 0.05, 0.1, 0.35, 0.55, 0.7, 0.75],
+        backgroundColor: ctx => {
+          const v = ctx.raw;
+          return v < 0 ? 'rgba(248,81,73,0.7)' : 'rgba(63,185,80,0.7)';
+        },
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { label: ctx => `Δ LBM: ${ctx.raw > 0 ? '+' : ''}${ctx.raw} kg/mo (est.)` } }
+      },
+      scales: {
+        y: { title: { display: true, text: 'Lean Mass Change (relative)' }, grid: { color: '#21262d' } },
+        x: { title: { display: true, text: 'Caloric Balance vs. Maintenance' }, grid: { display: false } }
+      }
+    }
+  });
+
+  /* Slider */
+  const slider = document.getElementById('energy-slider');
+  const result = document.getElementById('energy-result');
+  function updateSlider() {
+    const v = parseInt(slider.value);
+    let msg, color;
+    if (v <= -25) { msg = currentLang === 'zh' ? '⚠️ 过于激进，肌肉流失风险高' : '⚠️ Too aggressive — high muscle loss risk'; color = '#f85149'; }
+    else if (v < -15) { msg = currentLang === 'zh' ? '✓ 中等亏空 — 合理减脂' : '✓ Moderate deficit — reasonable cut'; color = '#e3b341'; }
+    else if (v < 0) { msg = currentLang === 'zh' ? '✓ 温和亏空 — 减脂保肌' : '✓ Mild deficit — lean cut'; color = '#58a6ff'; }
+    else if (v === 0) { msg = currentLang === 'zh' ? '▶ 维持期' : '▶ Maintenance'; color = '#8b949e'; }
+    else if (v <= 15) { msg = currentLang === 'zh' ? '✓ 增肌期最佳范围' : '✓ Optimal bulking range'; color = '#3fb950'; }
+    else { msg = currentLang === 'zh' ? '⚠️ 增肌过度，脂肪积累加剧' : '⚠️ Excessive — fat gain accelerates'; color = '#e3b341'; }
+    result.textContent = `${v > 0 ? '+' : ''}${v}%  ${msg}`;
+    result.style.color = color;
+  }
+  slider.addEventListener('input', updateSlider);
+  updateSlider();
+}
+
+/* S4: Protein meta-analysis curve */
+function initProteinChart() {
+  if (charts['protein']) return;
+  const ctx = document.getElementById('chart-protein').getContext('2d');
+  // Sigmoid-like plateau curve based on Morton 2018
+  const x = [0, 0.4, 0.8, 1.0, 1.2, 1.4, 1.62, 1.8, 2.0, 2.2, 2.6, 3.0, 3.5];
+  const y = [0, 0.3, 0.6, 0.72, 0.82, 0.9, 0.96, 0.99, 1.01, 1.02, 1.02, 1.02, 1.02];
+  charts['protein'] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: x.map(v => v + ' g/kg'),
+      datasets: [
+        {
+          label: 'FFM Gain Response (normalized)',
+          data: y, borderColor: '#58a6ff', backgroundColor: 'rgba(88,166,255,0.1)',
+          fill: true, tension: 0.4, pointRadius: 3, pointBackgroundColor: '#58a6ff'
+        },
+        {
+          label: 'Breakpoint 1.62 g/kg',
+          data: x.map((v, i) => v === 1.62 ? y[i] : null),
+          borderColor: '#e3b341', backgroundColor: '#e3b341',
+          pointRadius: x.map(v => v === 1.62 ? 8 : 0),
+          pointStyle: 'star', showLine: false
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false },
+        annotation: {},
+        tooltip: { callbacks: { label: ctx => ctx.datasetIndex === 0 ? `Response: ${(ctx.raw * 100).toFixed(0)}%` : 'Breakpoint: 1.62 g/kg/day' } }
+      },
+      scales: {
+        y: { title: { display: true, text: 'Normalized FFM Gain' }, grid: { color: '#21262d' }, max: 1.1 },
+        x: { title: { display: true, text: 'Protein Intake (g/kg/day)' }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+/* S5: MPS dose-response */
+function initMpsChart() {
+  if (charts['mps']) return;
+  const ctx = document.getElementById('chart-mps').getContext('2d');
+  const x = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8];
+  const y = [0, 0.25, 0.52, 0.78, 0.97, 1.0, 1.01, 1.01, 1.01];
+  charts['mps'] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: x.map(v => v + ' g/kg'),
+      datasets: [{
+        label: 'MPS Rate (normalized)',
+        data: y, borderColor: '#3fb950', backgroundColor: 'rgba(63,185,80,0.12)',
+        fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#3fb950'
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => `MPS: ${(ctx.raw * 100).toFixed(0)}% of max` } }
+      },
+      scales: {
+        y: { title: { display: true, text: 'Muscle Protein Synthesis Rate' }, grid: { color: '#21262d' } },
+        x: { title: { display: true, text: 'Protein per Meal (g/kg body weight)' }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+/* S6: Glycogen resynthesis */
+function initGlycogenChart() {
+  if (charts['glycogen']) return;
+  const ctx = document.getElementById('chart-glycogen').getContext('2d');
+  charts['glycogen'] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['0h', '1h', '2h', '3h', '4h', '5h', '6h'],
+      datasets: [
+        {
+          label: 'Immediate Carbs (Ivy 1988)',
+          data: [0, 45, 82, 108, 130, 148, 160],
+          borderColor: '#58a6ff', backgroundColor: 'rgba(88,166,255,0.1)',
+          fill: true, tension: 0.4, pointRadius: 4
+        },
+        {
+          label: '2h Delayed Carbs',
+          data: [0, 5, 10, 42, 70, 98, 120],
+          borderColor: '#f78166', backgroundColor: 'rgba(247,129,102,0.08)',
+          fill: true, tension: 0.4, pointRadius: 4, borderDash: [6, 3]
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { labels: { boxWidth: 12 } },
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw} mmol/kg (est.)` } }
+      },
+      scales: {
+        y: { title: { display: true, text: 'Glycogen Resynthesis (mmol/kg)' }, grid: { color: '#21262d' } },
+        x: { title: { display: true, text: 'Time Post-Workout' }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+/* S7: Fat vs Testosterone */
+function initFatChart() {
+  if (charts['fat']) return;
+  const ctx = document.getElementById('chart-fat').getContext('2d');
+  charts['fat'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['<10%', '10–15%', '15–20%', '20–25%', '25–30%', '>30%'],
+      datasets: [{
+        label: 'Relative Testosterone Level',
+        data: [72, 80, 88, 100, 103, 102],
+        backgroundColor: ['#f85149','#f85149','rgba(248,81,73,0.6)','#3fb950','#3fb950','#3fb950'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => `Testosterone: ~${ctx.raw}% of optimal` } }
+      },
+      scales: {
+        y: { title: { display: true, text: 'Relative Testosterone (%)' }, min: 60, max: 110, grid: { color: '#21262d' } },
+        x: { title: { display: true, text: 'Dietary Fat (% of Total Calories)' }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+/* S8: Meals vs MPS */
+function initMealsChart() {
+  if (charts['meals']) return;
+  const ctx = document.getElementById('chart-meals').getContext('2d');
+  charts['meals'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['2 meals', '3 meals', '4 meals', '6 meals', '8 meals'],
+      datasets: [{
+        label: 'MPS Efficiency (Areta 2013)',
+        data: [72, 88, 100, 95, 90],
+        backgroundColor: ['rgba(88,166,255,0.4)', 'rgba(88,166,255,0.6)', '#58a6ff', 'rgba(88,166,255,0.6)', 'rgba(88,166,255,0.4)'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => `MPS Efficiency: ${ctx.raw}%` } }
+      },
+      scales: {
+        y: { title: { display: true, text: 'Relative MPS Efficiency (%)' }, min: 60, max: 110, grid: { color: '#21262d' } },
+        x: { title: { display: true, text: 'Meals per Day (same total protein)' }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+/* S9: MATADOR */
+function initMatadorChart() {
+  if (charts['matador']) return;
+  const ctx = document.getElementById('chart-matador').getContext('2d');
+  charts['matador'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Fat Lost (kg)', 'Fat-Free Mass Retained (%)','RMR Change (%)'],
+      datasets: [
+        {
+          label: 'Continuous Dieting',
+          data: [8.0, 92, -8],
+          backgroundColor: 'rgba(248,81,73,0.7)',
+          borderRadius: 6
+        },
+        {
+          label: 'Intermittent (MATADOR)',
+          data: [12.3, 96, -4],
+          backgroundColor: 'rgba(63,185,80,0.7)',
+          borderRadius: 6
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { labels: { boxWidth: 12 } } },
+      scales: {
+        y: { grid: { color: '#21262d' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+}
+
+/* S12: LPL concept chart */
+function initLplChart() {
+  if (charts['lpl']) return;
+  const ctx = document.getElementById('chart-lpl').getContext('2d');
+  charts['lpl'] = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['High LPL (Stubborn)', 'Low LPL (Easy-loss)', 'Medium LPL'],
+      datasets: [{
+        data: [45, 30, 25],
+        backgroundColor: ['rgba(248,81,73,0.8)', 'rgba(63,185,80,0.8)', 'rgba(227,179,65,0.8)'],
+        borderColor: '#0d1117', borderWidth: 3
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 12 } },
+        tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}% of body fat` } }
+      }
+    }
+  });
+}
+
+/* S13: Regional fat */
+function initRegionalChart() {
+  if (charts['regional']) return;
+  const ctx = document.getElementById('chart-regional').getContext('2d');
+  charts['regional'] = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['LPL Activity', 'Fat Accumulation', 'Fat Loss Difficulty', 'α2 Receptors', 'Insulin Sensitivity'],
+      datasets: [
+        {
+          label: 'Abdomen (Male)',
+          data: [78, 80, 75, 85, 40],
+          borderColor: '#f85149', backgroundColor: 'rgba(248,81,73,0.15)',
+          pointBackgroundColor: '#f85149'
+        },
+        {
+          label: 'Thighs/Glutes (Female)',
+          data: [95, 92, 90, 70, 35],
+          borderColor: '#d2a8ff', backgroundColor: 'rgba(210,168,255,0.15)',
+          pointBackgroundColor: '#d2a8ff'
+        },
+        {
+          label: 'Arms / Face',
+          data: [25, 20, 20, 30, 75],
+          borderColor: '#3fb950', backgroundColor: 'rgba(63,185,80,0.15)',
+          pointBackgroundColor: '#3fb950'
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } },
+      scales: {
+        r: {
+          min: 0, max: 100,
+          grid: { color: '#30363d' },
+          ticks: { display: false },
+          pointLabels: { font: { size: 11 } }
+        }
+      }
+    }
+  });
+}
+
+/* ─── Init ─── */
+initChartsForSlide(0);
+</script>
+</body>
+</html>
