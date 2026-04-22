@@ -1289,7 +1289,7 @@ function initStretchChart() {
   charts['stretch'] = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['Shortened Position\n(Peak Contraction)', 'Mid-Range', 'Lengthened Position\n(Deep Stretch)'],
+     labels: ['Shortened\n(Peak)', 'Mid-Range', 'Lengthened\n(Deep Stretch)'],
       datasets: [
         { label: 'Regional Hypertrophy Response', data: [0.55, 0.82, 1.0], backgroundColor: ['rgba(139,148,158,0.5)','rgba(88,166,255,0.5)','rgba(240,136,62,0.8)'], borderRadius: 6 },
         { label: 'Whole-Muscle Average', data: [0.60, 0.75, 0.85], backgroundColor: ['rgba(139,148,158,0.2)','rgba(88,166,255,0.2)','rgba(240,136,62,0.3)'], borderRadius: 6, borderWidth: 1, borderColor: ['#8b949e','#58a6ff','#f0883e'] }
@@ -1302,7 +1302,7 @@ function initStretchChart() {
       },
       scales: {
         y: { title: { display: true, text: 'Relative Hypertrophy (normalized)' }, grid: { color: '#21262d' } },
-        x: { grid: { display: false } }
+        x: { grid: { display: false }, ticks: { maxRotation: 30, font: { size: 9 } } }
       }
     }
   });
